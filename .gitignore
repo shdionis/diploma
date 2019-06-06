@@ -23,6 +23,8 @@
 
 # Gradle
 */.idea/**/gradle.xml
+*/.gradle/
+*/build/
 */.idea/**/libraries
 
 # Gradle and Maven with auto-import
