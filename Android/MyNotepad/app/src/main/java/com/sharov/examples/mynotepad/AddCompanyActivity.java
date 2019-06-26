@@ -3,6 +3,7 @@ package com.sharov.examples.mynotepad;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,7 +39,15 @@ public class AddCompanyActivity extends AppCompatActivity implements View.OnClic
             }
         });
         Intent intent = getIntent();
-        etCompanyName.setText(intent.getStringExtra(DBHelper.DB_COLUMN_NAME));
+        String id = intent.getStringExtra(DBHelper.DB_COLUMN_ID);
+        if(id!=null && !id.isEmpty()) {
+            DBHelper dbHelper = new DBHelper(this);
+            Cursor cursor = dbHelper.selectCompanyById(id);
+            if(cursor.moveToFirst()){
+                etCompanyName.setText(intent.getStringExtra(DBHelper.DB_COLUMN_NAME));
+            }
+            dbHelper.close();
+        }
     }
 
     @Override

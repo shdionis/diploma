@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -48,16 +47,15 @@ public class AddDepartmentActivity extends AppCompatActivity implements View.OnC
         Intent intent = getIntent();
         String id = intent.getStringExtra(DBHelper.DB_COLUMN_ID);
         if(id!=null && !id.isEmpty()) {
-            DBHelper dbHelper = new DBHelper(this, DBHelper.DB_NAME, DBHelper.DB_VERSION);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.query("departments", null, DBHelper.DB_COLUMN_ID+" = ?", new String[]{id}, null, null, null);
+            DBHelper dbHelper = new DBHelper(this);
+            Cursor cursor = dbHelper.selectDepartmentById(id);
             if(cursor.moveToFirst()){
                 etDepName.setText(cursor.getString(cursor.getColumnIndex(DBHelper.DB_COLUMN_NAME)));
                 etDepDirector.setText(cursor.getString(cursor.getColumnIndex(DBHelper.DB_COLUMN_DIRECTOR)));
                 etDepPhone.setText(cursor.getString(cursor.getColumnIndex(DBHelper.DB_COLUMN_PHONE)));
                 etDepDescription.setText(cursor.getString(cursor.getColumnIndex(DBHelper.DB_COLUMN_DESCRIPTION)));
             }
-            db.close();
+            dbHelper.close();
         }
 
     }

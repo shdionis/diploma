@@ -1,14 +1,9 @@
 package com.sharov.examples.mynotepad;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -17,6 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import static android.widget.CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER;
 import static com.sharov.examples.mynotepad.DBHelper.DB_COLUMN_ID;
@@ -32,7 +31,6 @@ public class DepartmentsActivity extends AppCompatActivity implements View.OnCli
     private final int REQUEST_CODE_ADD_DEARTMENT = 0;
     private final int REQUEST_CODE_EDIT_DEPARTMENT = 1;
     private DBHelper dbHelper;
-    private SQLiteDatabase db;
     private SimpleCursorAdapter cursorAdapter;
     private String id_company;
 
@@ -40,14 +38,10 @@ public class DepartmentsActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_departments);
-        dbHelper = new DBHelper(this, DBHelper.DB_NAME, DBHelper.DB_VERSION);
-        db = dbHelper.getWritableDatabase();
+        dbHelper = new DBHelper(this);
         Intent intent = getIntent();
         id_company = intent.getStringExtra(DBHelper.DB_COLUMN_ID);
-        Cursor cursor = db.rawQuery("select comDeps._id, comDeps.id_department, deps.name from company_departments as comDeps " +
-                "inner join departments as deps on comDeps.id_department = deps._id " +
-                "where comDeps.id_company = ?", new String[]{id_company}
-        );
+        Cursor cursor = dbHelper.selectCompanyDepsByCompanyId(id_company);
 
         cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursor, from, to, FLAG_REGISTER_CONTENT_OBSERVER);
         ListView lvDepartments = findViewById(R.id.lvDepartments);
@@ -85,26 +79,23 @@ public class DepartmentsActivity extends AppCompatActivity implements View.OnCli
             cv.put(DBHelper.DB_COLUMN_PHONE, data.getStringExtra(DBHelper.DB_COLUMN_PHONE));
             switch (requestCode) {
                 case REQUEST_CODE_ADD_DEARTMENT:
-                    long depId = db.insert("departments", null, cv);
+                    long depId = dbHelper.insert("departments", null, cv);
                     cv.clear();
                     cv.put(DB_COLUMN_ID_COMPANY, id_company);
                     cv.put(DB_COLUMN_ID_DEPARTMENT, depId);
-                    db.insert("company_departments", null, cv);
+                    dbHelper.insert("company_departments", null, cv);
                     refreshCursor();
                     break;
                 case REQUEST_CODE_EDIT_DEPARTMENT:
                     String[] updatedDepId = new String[]{data.getStringExtra(DB_COLUMN_ID)};
-                    db.update("departments", cv, DB_COLUMN_ID+" = ?", updatedDepId);
+                    dbHelper.update("departments", cv, DB_COLUMN_ID + " = ?", updatedDepId);
                     break;
             }
         }
     }
 
     private void refreshCursor() {
-        Cursor cursor = db.rawQuery("select comDeps._id, comDeps.id_department, deps.name from company_departments as comDeps " +
-                "inner join departments as deps on comDeps.id_department = deps._id " +
-                "where comDeps.id_company = ?", new String[]{id_company}
-        );
+        Cursor cursor = dbHelper.selectCompanyDepsByCompanyId(id_company);
         cursorAdapter.changeCursor(cursor);
     }
 
@@ -122,17 +113,8 @@ public class DepartmentsActivity extends AppCompatActivity implements View.OnCli
         String id = cursor.getString(cursor.getColumnIndex(DBHelper.DB_COLUMN_ID_DEPARTMENT));
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:
-                db.beginTransaction();
-                try {
-                    db.delete("company_departments", DB_COLUMN_ID_DEPARTMENT + " = ?",
-                            new String[]{id});
-                    db.delete("departments", DB_COLUMN_ID + " = ?",
-                            new String[]{id});
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                    refreshCursor();
-                }
+                dbHelper.deleteDepartmentById(id);
+                refreshCursor();
                 break;
             case CONTEXT_MENU_EDIT:
                 Intent intent = new Intent(this, AddDepartmentActivity.class);
@@ -146,6 +128,6 @@ public class DepartmentsActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.close();
+        dbHelper.close();
     }
 }
