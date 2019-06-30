@@ -1,0 +1,9 @@
+# Gradle & Android Studio
+.gradle
+.idea
+build/
+local.properties
+*.iml
+.DS_Store
+/.mainframer
+captures/

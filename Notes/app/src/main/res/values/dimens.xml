@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="note_title_list_text_margin">16dp</dimen>
+    <dimen name="note_text_list_text_margin">14dp</dimen>
+    <dimen name="note_date_list_text_margin">12dp</dimen>
+    <dimen name="primary_text_height">32dp</dimen>
+    <dimen name="secondary_text_height">20dp</dimen>
+</resources>
