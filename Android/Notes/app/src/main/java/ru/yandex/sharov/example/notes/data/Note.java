@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.data;
 
 import java.text.SimpleDateFormat;
 
@@ -9,12 +9,17 @@ public class Note {
     private SimpleDateFormat format;
     private SimpleDateFormat shortFormat;
 
+    public Note() {
+        date = System.currentTimeMillis();
+        format = new SimpleDateFormat("dd MM yyyy, HH:mm");
+        shortFormat = new SimpleDateFormat("dd.MM");
+    }
+
     public Note(String tite, long date, String text) {
+        this();
         this.title = tite;
         this.date = date;
         this.text = text;
-        format = new SimpleDateFormat("dd MM yyyy, HH:mm");
-        shortFormat = new SimpleDateFormat("dd.MM");
     }
 
     public String getTitle() {

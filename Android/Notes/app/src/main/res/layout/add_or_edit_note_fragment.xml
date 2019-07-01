@@ -20,8 +20,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvTitleNote"
+    <EditText
+        android:id="@+id/etTitleNote"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/primary_text_height"
         android:layout_marginTop="16dp"
@@ -32,19 +32,26 @@
         app:layout_constraintStart_toStartOf="@id/tvDateNote"
         app:layout_constraintTop_toBottomOf="@+id/tvDateNote" />
 
-    <TextView
-        android:id="@+id/tvTextNote"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:id="@+id/ScrollView01"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-
-        android:gravity="left|bottom"
-        android:text="Text"
-        android:textColor="@color/secondary_text_list_color"
-        android:textSize="@dimen/note_text_list_text_margin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitleNote" />
+        app:layout_constraintStart_toStartOf="@+id/etTitleNote"
+        app:layout_constraintTop_toBottomOf="@+id/etTitleNote">
+
+        <EditText
+            android:id="@+id/etTextNote"
+            android:layout_width="380dp"
+            android:layout_height="608dp"
+            android:layout_marginTop="16dp"
+
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="left|top"
+            android:text="Text"
+            android:maxLines="20"
+            android:textColor="@color/secondary_text_list_color"
+            android:textSize="@dimen/note_text_list_text_margin" />
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

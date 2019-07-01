@@ -5,21 +5,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import ru.yandex.sharov.example.notes.data.Note;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
-    private NotesListFragment parent;
+
     private List<Note> dataList;
     private final String LOG_TAG = "LOG_TAG";
 
-    public NotesRecyclerViewAdapter(List<Note> dataSource, NotesListFragment notesListFragment){
+    protected NoteItemOnClickListener noteItemOnClickListener;
+
+    public void setListener(NoteItemOnClickListener noteItemOnClickListener) {
+        this.noteItemOnClickListener = noteItemOnClickListener;
+    }
+
+    public NotesRecyclerViewAdapter(List<Note> dataSource){
         dataList = dataSource;
-        parent = notesListFragment;
         Log.d(LOG_TAG, getClass().getSimpleName() + " constructor");
     }
 
@@ -27,15 +35,13 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d(LOG_TAG, getClass().getSimpleName() + " onCreateViewHolder");
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_item, parent, false);
-        NoteViewHolder nvh = new NoteViewHolder(view);
-        return nvh;
+        return new NoteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Log.d(LOG_TAG, getClass().getSimpleName() + " onBindViewHolder");
-        View ll = ((NoteViewHolder)holder).getTitle();
+        View ll = ((NoteViewHolder)holder).getNoteListItemView();
         Note n = dataList.get(position);
         TextView tvTitle = ll.findViewById(R.id.tvTitle);
         TextView tvDate = ll.findViewById(R.id.tvDate);
@@ -44,12 +50,7 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
         tvDate.setText(n.getShortDate());
         tvTitle.setText(n.getTitle());
         tvText.setText(n.getShortText(40));
-        ll.setOnClickListener(new NoteItemOnClickListener(n, parent));
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        ((NoteViewHolder) holder).bindNote(n);
     }
 
     @Override
@@ -57,44 +58,26 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
         return dataList.size();
     }
 
-    private static class NoteViewHolder extends RecyclerView.ViewHolder {
 
-        private View title;
+    private class NoteViewHolder extends RecyclerView.ViewHolder {
+
+        private View noteListItemView;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = itemView;
+            noteListItemView = itemView;
         }
 
-        public View getTitle() {
-            return title;
-        }
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        Log.d(LOG_TAG, getClass().getSimpleName() + " onAttachedToRecyclerView");
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        Log.d(LOG_TAG, getClass().getSimpleName() + " onDetachedFromRecyclerView");
-        super.onDetachedFromRecyclerView(recyclerView);
-    }
-
-    private class NoteItemOnClickListener implements View.OnClickListener {
-        private Note note;
-        private NotesListFragment parent;
-
-        public NoteItemOnClickListener(Note note, NotesListFragment parent) {
-            this.note = note;
-            this.parent = parent;
+        public View getNoteListItemView() {
+            return noteListItemView;
         }
 
-        @Override
-        public void onClick(View view) {
-            parent.showNote(note);
+        public void bindNote(Note note) {
+            noteListItemView.setOnClickListener(v -> onNoteitemClicked(note));
+        }
+
+        private void onNoteitemClicked(Note note) {
+            noteItemOnClickListener.onClickNoteItem(note);
         }
     }
 }
