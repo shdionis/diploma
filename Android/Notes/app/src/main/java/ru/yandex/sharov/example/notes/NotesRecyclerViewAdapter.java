@@ -1,29 +1,32 @@
 package ru.yandex.sharov.example.notes;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Random;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
-
+    private NotesListFragment parent;
     private List<Note> dataList;
+    private final String LOG_TAG = "LOG_TAG";
 
-    public NotesRecyclerViewAdapter(List<Note> dataSource){
+    public NotesRecyclerViewAdapter(List<Note> dataSource, NotesListFragment notesListFragment){
         dataList = dataSource;
+        parent = notesListFragment;
+        Log.d(LOG_TAG, getClass().getSimpleName() + " constructor");
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d(LOG_TAG, getClass().getSimpleName() + " onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_item, parent, false);
         NoteViewHolder nvh = new NoteViewHolder(view);
         return nvh;
@@ -31,19 +34,17 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Log.d(LOG_TAG, getClass().getSimpleName() + " onBindViewHolder");
         View ll = ((NoteViewHolder)holder).getTitle();
         Note n = dataList.get(position);
         TextView tvTitle = ll.findViewById(R.id.tvTitle);
         TextView tvDate = ll.findViewById(R.id.tvDate);
         TextView tvText = ll.findViewById(R.id.tvText);
-        View circlePoint = ll.findViewById(R.id.circlePoint);
-        Random r = new Random();
-        GradientDrawable gd = (GradientDrawable) circlePoint.getBackground();
-        gd.setColor(Color.argb(255, 46, 46, 46));
 
-        tvDate.setText(n.getDate());
-        tvTitle.setText(n.getTite());
+        tvDate.setText(n.getShortDate());
+        tvTitle.setText(n.getTitle());
         tvText.setText(n.getShortText(40));
+        ll.setOnClickListener(new NoteItemOnClickListener(n, parent));
     }
 
     @Override
@@ -67,6 +68,33 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
 
         public View getTitle() {
             return title;
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        Log.d(LOG_TAG, getClass().getSimpleName() + " onAttachedToRecyclerView");
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        Log.d(LOG_TAG, getClass().getSimpleName() + " onDetachedFromRecyclerView");
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
+
+    private class NoteItemOnClickListener implements View.OnClickListener {
+        private Note note;
+        private NotesListFragment parent;
+
+        public NoteItemOnClickListener(Note note, NotesListFragment parent) {
+            this.note = note;
+            this.parent = parent;
+        }
+
+        @Override
+        public void onClick(View view) {
+            parent.showNote(note);
         }
     }
 }

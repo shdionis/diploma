@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tvDateNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        android:textSize="@dimen/note_date_list_text_margin"
+        android:textColor="@color/meta_text_list_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitleNote"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/primary_text_height"
+        android:layout_marginTop="16dp"
+        android:gravity="bottom"
+        android:text="TextView"
+        android:textSize="@dimen/note_title_list_text_margin"
+        android:textColor="@color/primary_text_list_color"
+        app:layout_constraintStart_toStartOf="@id/tvDateNote"
+        app:layout_constraintTop_toBottomOf="@+id/tvDateNote" />
+
+    <TextView
+        android:id="@+id/tvTextNote"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/secondary_text_height"
+        android:layout_marginTop="16dp"
+
+        android:gravity="left|bottom"
+        android:text="Text"
+        android:textColor="@color/secondary_text_list_color"
+        android:textSize="@dimen/note_text_list_text_margin"
+        app:layout_constraintStart_toStartOf="@+id/tvTitleNote"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleNote" />
+</androidx.constraintlayout.widget.ConstraintLayout>
