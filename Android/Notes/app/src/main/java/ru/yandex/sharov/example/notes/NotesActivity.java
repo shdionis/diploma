@@ -14,7 +14,7 @@ public class NotesActivity extends AppCompatActivity implements NotesListFragmen
     private final String LOG_TAG = "LOG_TAG";
 
     private Fragment noteListFrag;
-    private ShowNoteFragent showNoteFrag;
+    private ShowNoteFragment showNoteFrag;
     private FragmentTransaction fragmentTransaction;
 
     @Override
@@ -23,7 +23,7 @@ public class NotesActivity extends AppCompatActivity implements NotesListFragmen
         setContentView(R.layout.activity_notes);
         Log.d(LOG_TAG, getClass().getSimpleName() + " onCreate");
         noteListFrag = new NotesListFragment();
-        showNoteFrag = new ShowNoteFragent();
+        showNoteFrag = new ShowNoteFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.frameLayout, noteListFrag);

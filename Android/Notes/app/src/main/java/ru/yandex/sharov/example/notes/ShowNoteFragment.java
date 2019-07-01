@@ -12,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.w3c.dom.Text;
-
-public class ShowNoteFragent extends Fragment {
+public class ShowNoteFragment extends Fragment {
     private Note note;
     private TextView tvDateNote;
     private TextView tvTitleNote;
@@ -106,7 +104,7 @@ public class ShowNoteFragent extends Fragment {
         Log.d(LOG_TAG, getClass().getSimpleName() + " onDetach");
     }
 
-    public ShowNoteFragent withNote(Note note) {
+    public ShowNoteFragment withNote(Note note) {
         this.note = note;
         return this;
     }
