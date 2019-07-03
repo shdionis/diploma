@@ -1,66 +1,77 @@
 package ru.yandex.sharov.example.notes.data;
 
-import java.text.SimpleDateFormat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import ru.yandex.sharov.example.notes.util.FormatUtil;
 
 public class Note {
-    private String title;
+    private static AtomicInteger count = new AtomicInteger();
+
+    private int id;
     private long date;
+    @NonNull
+    private String title;
+    @Nullable
     private String text;
-    private SimpleDateFormat format;
-    private SimpleDateFormat shortFormat;
 
     public Note() {
+        id = count.decrementAndGet();
         date = System.currentTimeMillis();
-        format = new SimpleDateFormat("dd MM yyyy, HH:mm");
-        shortFormat = new SimpleDateFormat("dd.MM");
     }
 
-    public Note(String tite, long date, String text) {
+    public Note(@NonNull String title, long date, @Nullable String text) {
         this();
-        this.title = tite;
+        this.title = title;
         this.date = date;
         this.text = text;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         this.title = title;
     }
 
+    @NonNull
     public String getDate() {
-        return format.format(date);
+        return FormatUtil.getDateFormated(date);
     }
 
+    @NonNull
     public String getShortDate() {
-        return shortFormat.format(date);
+        return FormatUtil.getShortDateFormated(date);
     }
 
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    @Nullable
     public String getText() {
         return text;
     }
 
-    public String getShortText(int length) {
-        if(length > text.length()) {
-            return text;
-        }
-        return text.substring(0, length).concat("...");
-    }
-
-    public void setText(String text) {
+    public void setText(@Nullable String text) {
         this.text = text;
     }
 
     @Override
     public String toString() {
         return "Note{" +
+                "id='" + id + '\'' +
                 "title='" + title + '\'' +
-                ", date=" + date +
-                ", text='" + getShortText(10) + '\'' +
-                ", format=" + format +
-                ", shortFormat=" + shortFormat +
+                ", date=" + getShortDate() +
+                ", text='" + text + '\'' +
                 '}';
     }
 }

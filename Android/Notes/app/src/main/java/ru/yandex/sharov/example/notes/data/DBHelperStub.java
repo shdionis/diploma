@@ -1,21 +1,27 @@
 package ru.yandex.sharov.example.notes.data;
 
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DBHelperStub {
 
-    private static final String LOG_TAG = "LOG_TAG";
-    private List<Note> data;
+    private static final Object lock = new Object();
     private static DBHelperStub instance;
+
+    private List<Note> data;
 
     public static DBHelperStub getInstance() {
         if (instance == null) {
-            instance = new DBHelperStub();
-        }
-        return instance;
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new DBHelperStub();
+                }
+                return instance;
+            }
+        } else return instance;
 
     }
 
@@ -24,7 +30,6 @@ public class DBHelperStub {
     }
 
     private void initData() {
-        Log.d(LOG_TAG, getClass().getSimpleName() + " onCreate");
         data = new ArrayList<>();
         for (int i = 1; i <= 50; i++) {
             StringBuilder textNote = new StringBuilder();
@@ -40,7 +45,34 @@ public class DBHelperStub {
         return data;
     }
 
-    private void addOrUpdateNote(Note note) {
+    public void addOrUpdateNote(@NonNull Note note) {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).getId() == note.getId()) {
+                data.remove(i);
+                data.add(i, note);
+                return;
+            }
+        }
         data.add(note);
+
+    }
+
+    public void removeNote(Integer noteId) {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).getId() == noteId) {
+                data.remove(i);
+                return;
+            }
+        }
+    }
+
+    @Nullable
+    public Note getNoteById(int noteId) {
+        for (Note note : data) {
+            if (note.getId() == noteId) {
+                return note;
+            }
+        }
+        return null;
     }
 }

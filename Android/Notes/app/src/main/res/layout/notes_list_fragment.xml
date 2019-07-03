@@ -2,19 +2,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/main_top_bottom_margin"
+    android:layout_marginBottom="@dimen/main_top_bottom_margin"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recycler_view_note_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/add_note_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_my_icon" />
+        android:layout_margin="@dimen/element_top_left_right_margin"
+        android:backgroundTint="@color/color_primary"
+        android:src="@drawable/ic_plus_icon" />
 </FrameLayout>

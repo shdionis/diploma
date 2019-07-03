@@ -4,6 +4,8 @@
     <dimen name="note_title_list_text_margin">16dp</dimen>
     <dimen name="note_text_list_text_margin">14dp</dimen>
     <dimen name="note_date_list_text_margin">12dp</dimen>
-    <dimen name="primary_text_height">32dp</dimen>
-    <dimen name="secondary_text_height">20dp</dimen>
+    <dimen name="main_top_bottom_margin">8dp</dimen>
+    <dimen name="element_top_left_right_margin">16dp</dimen>
+    <dimen name="primary_text_height">22dp</dimen>
+    <dimen name="secondary_text_height">18dp</dimen>
 </resources>

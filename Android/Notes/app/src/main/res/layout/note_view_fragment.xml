@@ -4,47 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_marginTop="@dimen/main_top_bottom_margin"
+    android:layout_marginBottom="@dimen/main_top_bottom_margin">
 
 
     <TextView
-        android:id="@+id/tvDateNote"
+        android:id="@+id/note_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:layout_marginStart="@dimen/element_top_left_right_margin"
+        android:layout_marginLeft="@dimen/element_top_left_right_margin"
+        android:layout_marginTop="@dimen/element_top_left_right_margin"
         android:textSize="@dimen/note_date_list_text_margin"
         android:textColor="@color/meta_text_list_color"
+        tools:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTitleNote"
+        android:id="@+id/note_title"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/primary_text_height"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/element_top_left_right_margin"
         android:gravity="bottom"
-        android:text="TextView"
         android:textSize="@dimen/note_title_list_text_margin"
         android:textColor="@color/primary_text_list_color"
-        app:layout_constraintStart_toStartOf="@id/tvDateNote"
-        app:layout_constraintTop_toBottomOf="@+id/tvDateNote" />
+        tools:text="TextView"
+        app:layout_constraintStart_toStartOf="@id/note_date"
+        app:layout_constraintTop_toBottomOf="@+id/note_date" />
 
     <TextView
-        android:id="@+id/tvTextNote"
-        android:layout_width="match_parent"
+        android:id="@+id/note_text"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-
-        android:gravity="left|bottom"
-        android:text="Text"
+        android:layout_marginStart="@dimen/element_top_left_right_margin"
+        android:layout_marginTop="@dimen/element_top_left_right_margin"
+        android:layout_marginEnd="@dimen/element_top_left_right_margin"
         android:textColor="@color/secondary_text_list_color"
         android:textSize="@dimen/note_text_list_text_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitleNote" />
+        app:layout_constraintTop_toBottomOf="@+id/note_title"
+        tools:text="Text" />
 </androidx.constraintlayout.widget.ConstraintLayout>
