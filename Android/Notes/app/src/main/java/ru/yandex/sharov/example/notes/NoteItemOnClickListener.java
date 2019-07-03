@@ -1,11 +1,11 @@
 package ru.yandex.sharov.example.notes;
 
-import androidx.annotation.NonNull;
-
-import ru.yandex.sharov.example.notes.data.Note;
-
 public interface NoteItemOnClickListener {
-    void onClickNoteItem(@NonNull Note note);
+    void onClickNoteItem(int noteId);
 
-    void onAddNote(NotesRecyclerViewAdapter adapter);
+    void onEditNote(int noteId);
+
+    void onAddNote();
+
+    void onBack();
 }

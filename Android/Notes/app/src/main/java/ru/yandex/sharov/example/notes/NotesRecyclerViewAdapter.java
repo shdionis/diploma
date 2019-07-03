@@ -9,47 +9,34 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import ru.yandex.sharov.example.notes.data.Note;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
 
-    private List<Note> dataList;
-    private final String LOG_TAG = "LOG_TAG";
+    private final static String LOG_TAG = "[LOG_TAG:NotRcclrVAdpt]";
 
-    protected NoteItemOnClickListener noteItemOnClickListener;
+    private List<Note> dataList;
+
+    private NoteItemOnClickListener noteItemOnClickListener;
 
     public void setListener(NoteItemOnClickListener noteItemOnClickListener) {
         this.noteItemOnClickListener = noteItemOnClickListener;
     }
 
-    public NotesRecyclerViewAdapter(List<Note> dataSource){
-        dataList = dataSource;
-        Log.d(LOG_TAG, getClass().getSimpleName() + " constructor");
-    }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(LOG_TAG, getClass().getSimpleName() + " onCreateViewHolder");
-        return new NoteViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_item, parent, false));
+        Log.d(LOG_TAG, " onCreateViewHolder");
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_item, parent, false);
+        return new NoteViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Log.d(LOG_TAG, getClass().getSimpleName() + " onBindViewHolder");
-        View ll = ((NoteViewHolder)holder).getNoteListItemView();
+        Log.d(LOG_TAG, " onBindViewHolder");
         Note n = dataList.get(position);
-        TextView tvTitle = ll.findViewById(R.id.tvTitle);
-        TextView tvDate = ll.findViewById(R.id.tvDate);
-        TextView tvText = ll.findViewById(R.id.tvText);
-
-        tvDate.setText(n.getShortDate());
-        tvTitle.setText(n.getTitle());
-        tvText.setText(n.getShortText(40));
         ((NoteViewHolder) holder).bindNote(n);
     }
 
@@ -58,26 +45,36 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
         return dataList.size();
     }
 
+    public void setDataList(List<Note> dataList) {
+        this.dataList = dataList;
+        notifyDataSetChanged();
+    }
 
     private class NoteViewHolder extends RecyclerView.ViewHolder {
 
         private View noteListItemView;
+        private TextView tvTitle;
+        private TextView tvDate;
+        private TextView tvText;
+
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             noteListItemView = itemView;
+            tvTitle = noteListItemView.findViewById(R.id.note_item_title);
+            tvDate = noteListItemView.findViewById(R.id.note_item_date);
+            tvText = noteListItemView.findViewById(R.id.note_item_text);
         }
 
-        public View getNoteListItemView() {
-            return noteListItemView;
+        public void bindNote(Note n) {
+            tvDate.setText(n.getShortDate());
+            tvTitle.setText(n.getTitle());
+            tvText.setText(n.getText());
+            noteListItemView.setOnClickListener(v -> onNoteitemClicked(n.getId()));
         }
 
-        public void bindNote(Note note) {
-            noteListItemView.setOnClickListener(v -> onNoteitemClicked(note));
-        }
-
-        private void onNoteitemClicked(Note note) {
-            noteItemOnClickListener.onClickNoteItem(note);
+        private void onNoteitemClicked(Integer noteId) {
+            noteItemOnClickListener.onClickNoteItem(noteId);
         }
     }
 }
