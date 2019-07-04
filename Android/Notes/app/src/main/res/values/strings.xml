@@ -3,6 +3,7 @@
     <string name="action_save">Сохранить</string>
     <string name="action_edit">Редактировать</string>
     <string name="action_delete">Удалить</string>
+    <string name="action_cancel">Отменить</string>
     <string name="text_dialog_save">Сохранить изменения?</string>
-    <string name="text_dialog_delete">Вы действительно хотите удалить заметку?</string>
+    <string name="text_dialog_delete">Удалить заметку?</string>
 </resources>

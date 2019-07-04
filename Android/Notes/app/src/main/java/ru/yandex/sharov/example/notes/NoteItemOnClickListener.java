@@ -7,5 +7,5 @@ public interface NoteItemOnClickListener {
 
     void onAddNote();
 
-    void onBack();
+    void onAfterChangedNote();
 }

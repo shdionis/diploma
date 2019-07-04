@@ -8,18 +8,18 @@
         <item name="colorAccent">@color/color_accent</item>
     </style>
 
-    <style name="text_view_meta">
+    <style name="TextViewMeta">
         <item name="android:textSize">@dimen/note_date_list_text_margin</item>
         <item name="android:textColor">@color/meta_text_list_color</item>
     </style>
-    <style name="text_view_secondary">
+    <style name="TextViewSecondary">
         <item name="android:textSize">@dimen/note_text_list_text_margin</item>
         <item name="android:textColor">@color/secondary_text_list_color</item>
         <item name="singleLine">true</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
-    <style name="text_view_primary">
+    <style name="TextViewPrimary">
         <item name="android:textSize">@dimen/note_title_list_text_margin</item>
         <item name="android:textColor">@color/primary_text_list_color</item>
         <item name="singleLine">true</item>

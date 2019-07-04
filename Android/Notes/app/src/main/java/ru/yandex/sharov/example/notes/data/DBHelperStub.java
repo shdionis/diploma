@@ -13,6 +13,7 @@ public class DBHelperStub {
 
     private List<Note> data;
 
+    @NonNull
     public static DBHelperStub getInstance() {
         if (instance == null) {
             synchronized (lock) {

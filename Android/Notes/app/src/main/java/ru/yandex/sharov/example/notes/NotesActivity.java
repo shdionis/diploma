@@ -12,9 +12,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class NotesActivity extends AppCompatActivity implements NoteItemOnClickListenerProvider, FragmentManager.OnBackStackChangedListener {
 
-    private final static String LOG_TAG = "[LOG_TAG:NotesActivity]";
+    private static final String LOG_TAG = "[LOG_TAG:NotesActivity]";
 
-    private FragmentTransaction fragmentTransaction;
     private NoteItemOnClickListener listener;
 
     @Override
@@ -34,32 +33,37 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
     @Override
     public NoteItemOnClickListener getListener() {
         if (listener == null) {
-            listener = new NoteItemOnClickListener() {
-                @Override
-                public void onClickNoteItem(int noteId) {
-                    ShowNoteFragment showNoteFragment = ShowNoteFragment.newInstance(noteId);
-                    replaceFragment(showNoteFragment, true);
-                }
-
-                @Override
-                public void onAddNote() {
-                    NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance();
-                    replaceFragment(addOrEditFragment, true);
-                }
-
-                @Override
-                public void onEditNote(int noteId) {
-                    NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance(noteId);
-                    replaceFragment(addOrEditFragment, true);
-                }
-
-                @Override
-                public void onBack() {
-                    getSupportFragmentManager().popBackStack();
-                }
-            };
+            listener = createListener();
         }
         return listener;
+    }
+
+    @NonNull
+    private NoteItemOnClickListener createListener() {
+        return new NoteItemOnClickListener() {
+            @Override
+            public void onClickNoteItem(int noteId) {
+                ShowNoteFragment showNoteFragment = ShowNoteFragment.newInstance(noteId);
+                replaceFragment(showNoteFragment, true);
+            }
+
+            @Override
+            public void onAddNote() {
+                NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance();
+                replaceFragment(addOrEditFragment, true);
+            }
+
+            @Override
+            public void onEditNote(int noteId) {
+                NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance(noteId);
+                replaceFragment(addOrEditFragment, true);
+            }
+
+            @Override
+            public void onAfterChangedNote() {
+                getSupportFragmentManager().popBackStack();
+            }
+        };
     }
 
     @Override
@@ -79,7 +83,7 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
 
     private void replaceFragment(@NonNull Fragment fragment, boolean addToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         if (addToBackStack) {
             fragmentTransaction.addToBackStack(null);

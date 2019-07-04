@@ -17,16 +17,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ru.yandex.sharov.example.notes.data.DBHelperStub;
+import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class NotesListFragment extends Fragment {
 
-    private final static String LOG_TAG = "[LOG_TAG:NoteLstFrgmnt]";
+    private static final String LOG_TAG = "[LOG_TAG:NoteLstFrgmnt]";
 
     private RecyclerView recyclerView;
     private NotesRecyclerViewAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
     private NoteItemOnClickListener listener;
 
+    @NonNull
     public static NotesListFragment newInstance() {
         return new NotesListFragment();
     }
@@ -35,11 +38,8 @@ public class NotesListFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, " onAttach");
-        try {
-            listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        } catch (ClassCastException ex) {
-            throw new RuntimeException("Context must be implementation of NoteItemOnClickListenerProvider!", ex);
-        }
+        UIUtil.assertActivityImplementsInterface(context, NoteItemOnClickListenerProvider.class);
+        listener = ((NoteItemOnClickListenerProvider) context).getListener();
     }
 
     @Override
@@ -65,4 +65,6 @@ public class NotesListFragment extends Fragment {
         addNoteFab.setOnClickListener(v -> listener.onAddNote());
         return rootV;
     }
+
+
 }

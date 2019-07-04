@@ -1,6 +1,8 @@
 package ru.yandex.sharov.example.notes;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,18 +19,22 @@ import androidx.fragment.app.Fragment;
 
 import ru.yandex.sharov.example.notes.data.DBHelperStub;
 import ru.yandex.sharov.example.notes.data.Note;
+import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class ShowNoteFragment extends Fragment {
-    private final String LOG_TAG = "LOG_TAG";
-    private final String ENTITY_NAME = "ShowNoteFragment";
+    private static final String LOG_TAG = "LOG_TAG";
+    private static final String ENTITY_NAME = "ShowNoteFragment";
+    private static final int DELETE_REQUEST_CODE = 0;
+    private static final String NOTE_ARG = "note";
 
     @NonNull
     private Note note;
     private NoteItemOnClickListener listener;
 
+    @NonNull
     public static ShowNoteFragment newInstance(@NonNull Integer noteId) {
         Bundle args = new Bundle();
-        args.putInt("note", noteId);
+        args.putInt(NOTE_ARG, noteId);
         ShowNoteFragment fragment = new ShowNoteFragment();
         fragment.setArguments(args);
         return fragment;
@@ -38,19 +44,8 @@ public class ShowNoteFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, " onAttach");
-        try {
-            listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        } catch (ClassCastException ex) {
-            throw new RuntimeException("Context must be implementation of NoteItemOnClickListenerProvider!", ex);
-        }
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            note = DBHelperStub.getInstance().getNoteById(savedInstanceState.getInt("note"));
-        }
+        UIUtil.assertActivityImplementsInterface(context, NoteItemOnClickListenerProvider.class);
+        listener = ((NoteItemOnClickListenerProvider) context).getListener();
     }
 
     @Override
@@ -60,7 +55,7 @@ public class ShowNoteFragment extends Fragment {
         Log.d(LOG_TAG, ENTITY_NAME + " onCreate");
         Bundle args = getArguments();
         if (args != null) {
-            this.note = DBHelperStub.getInstance().getNoteById(args.getInt("note"));
+            this.note = DBHelperStub.getInstance().getNoteById(args.getInt(NOTE_ARG));
         }
     }
 
@@ -80,12 +75,6 @@ public class ShowNoteFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("note", note.getId());
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.note_show_actions_items, menu);
@@ -95,13 +84,30 @@ public class ShowNoteFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete:
-                DBHelperStub.getInstance().removeNote(note.getId());
-                listener.onBack();
+                ConfirmActionDialog.showAlert(getResources().getString(R.string.text_dialog_delete),
+                        getResources().getString(R.string.action_delete), this, DELETE_REQUEST_CODE);
                 break;
             case R.id.action_edit:
                 listener.onEditNote(note.getId());
                 break;
+            default:
+                throw new IllegalArgumentException("Unknown menu item!");
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case DELETE_REQUEST_CODE:
+                    DBHelperStub.getInstance().removeNote(note.getId());
+                    listener.onAfterChangedNote();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown menu item!");
+            }
+        }
     }
 }

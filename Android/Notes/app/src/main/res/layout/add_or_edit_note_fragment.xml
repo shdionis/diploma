@@ -17,7 +17,7 @@
         android:layout_marginTop="@dimen/element_top_left_right_margin"
         android:textColor="@color/meta_text_list_color"
         android:textSize="@dimen/note_date_list_text_margin"
-        style="@style/text_view_meta"
+        style="@style/TextViewMeta"
         tools:text="TextView" />
 
     <EditText
@@ -28,7 +28,7 @@
         android:layout_marginLeft="@dimen/element_top_left_right_margin"
         android:layout_marginTop="@dimen/element_top_left_right_margin"
         android:gravity="bottom"
-        style="@style/text_view_primary"
+        style="@style/TextViewPrimary"
         android:hint="Заголовок"
         android:textColor="@color/primary_text_list_color"
         android:textSize="@dimen/note_title_list_text_margin"

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -15,14 +16,20 @@ import ru.yandex.sharov.example.notes.data.Note;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
 
-    private final static String LOG_TAG = "[LOG_TAG:NotRcclrVAdpt]";
+    private static final String LOG_TAG = "[LOG_TAG:NotRcclrVAdpt]";
 
+    @Nullable
     private List<Note> dataList;
-
+    @Nullable
     private NoteItemOnClickListener noteItemOnClickListener;
 
-    public void setListener(NoteItemOnClickListener noteItemOnClickListener) {
+    public void setListener(@NonNull NoteItemOnClickListener noteItemOnClickListener) {
         this.noteItemOnClickListener = noteItemOnClickListener;
+    }
+
+    public void setDataList(@NonNull List<Note> dataList) {
+        this.dataList = dataList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -45,18 +52,16 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
         return dataList.size();
     }
 
-    public void setDataList(List<Note> dataList) {
-        this.dataList = dataList;
-        notifyDataSetChanged();
-    }
-
     private class NoteViewHolder extends RecyclerView.ViewHolder {
 
+        @NonNull
         private View noteListItemView;
+        @NonNull
         private TextView tvTitle;
+        @NonNull
         private TextView tvDate;
+        @NonNull
         private TextView tvText;
-
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,15 +71,17 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
             tvText = noteListItemView.findViewById(R.id.note_item_text);
         }
 
-        public void bindNote(Note n) {
+        public void bindNote(@NonNull Note n) {
             tvDate.setText(n.getShortDate());
             tvTitle.setText(n.getTitle());
             tvText.setText(n.getText());
             noteListItemView.setOnClickListener(v -> onNoteitemClicked(n.getId()));
         }
 
-        private void onNoteitemClicked(Integer noteId) {
-            noteItemOnClickListener.onClickNoteItem(noteId);
+        private void onNoteitemClicked(int noteId) {
+            if (noteItemOnClickListener != null) {
+                noteItemOnClickListener.onClickNoteItem(noteId);
+            }
         }
     }
 }

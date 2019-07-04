@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/note_item_title"
-        style="@style/text_view_primary"
+        style="@style/TextViewPrimary"
         android:layout_width="0dp"
         android:layout_height="@dimen/primary_text_height"
         android:layout_marginLeft="@dimen/element_top_left_right_margin"
@@ -34,7 +34,7 @@
 
     <TextView
         android:id="@+id/note_item_date"
-        style="@style/text_view_meta"
+        style="@style/TextViewMeta"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/primary_text_height"
         android:layout_marginEnd="@dimen/element_top_left_right_margin"
@@ -48,7 +48,7 @@
 
     <TextView
         android:id="@+id/note_item_text"
-        style="@style/text_view_secondary"
+        style="@style/TextViewSecondary"
         android:layout_width="0dp"
         android:layout_height="18dp"
         android:layout_marginStart="@dimen/element_top_left_right_margin"
