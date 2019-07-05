@@ -15,7 +15,7 @@ public class ConfirmActionDialog extends DialogFragment {
     private static final String CONFIRM_BTN_TEXT_ARG = "confirm";
     private static final String MESSAGE_TEXT_ARG = "text";
 
-    public static void showAlert(String textMessage, String yesBtnText, Fragment fragment, int requestCode) {
+    public static void showAlert(@NonNull String textMessage, @NonNull String yesBtnText, @NonNull Fragment fragment, int requestCode) {
         Bundle args = new Bundle();
         args.putString(CONFIRM_BTN_TEXT_ARG, yesBtnText);
         args.putString(MESSAGE_TEXT_ARG, textMessage);
@@ -34,9 +34,15 @@ public class ConfirmActionDialog extends DialogFragment {
         }
         String text = args.getString(MESSAGE_TEXT_ARG);
         String yesBtnText = args.getString(CONFIRM_BTN_TEXT_ARG);
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(requireContext())
                 .setMessage(text)
-                .setPositiveButton(yesBtnText, (dialogInterface, i) -> getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null))
-                .create();
+                .setPositiveButton(
+                        yesBtnText,
+                        (dialogInterface, i) -> getTargetFragment().onActivityResult(
+                                getTargetRequestCode(),
+                                Activity.RESULT_OK,
+                                null
+                        )
+                ).create();
     }
 }

@@ -21,7 +21,7 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
     @Nullable
     private List<Note> dataList;
     @Nullable
-    private NoteItemOnClickListener noteItemOnClickListener;
+    NoteItemOnClickListener noteItemOnClickListener;
 
     public void setListener(@NonNull NoteItemOnClickListener noteItemOnClickListener) {
         this.noteItemOnClickListener = noteItemOnClickListener;

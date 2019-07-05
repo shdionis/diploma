@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,11 +25,12 @@ import ru.yandex.sharov.example.notes.util.UIUtil;
 public class NoteAddOrEditFragment extends Fragment {
 
     private static final String LOG_TAG = "[LOG_TAG:NtAOEFrgmt]";
-    private static final int SAVE_CHANGIES_REQUEST_CODE = 1;
+    private static final int SAVE_CHANGES_REQUEST_CODE = 1;
     private static final String NOTE_ID_ARG = "noteId";
 
     private EditText noteTitle;
     private EditText noteText;
+    @NonNull
     private Note note;
     private NoteItemOnClickListener listener;
     private boolean isNewNote = false;
@@ -50,10 +50,10 @@ public class NoteAddOrEditFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, " onAttach");
-        UIUtil.assertActivityImplementsInterface(context, NoteItemOnClickListenerProvider.class);
+        UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
     }
 
@@ -97,15 +97,14 @@ public class NoteAddOrEditFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.note_edit_actions_items, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0); //TODO: копипаст. скрывает клавиатуру. возможно, можно сделать проще.
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        UIUtil.hideKeyTool(requireActivity());
         switch (item.getItemId()) {
             case R.id.action_save:
                 if (!isNewNote) {
@@ -113,14 +112,14 @@ public class NoteAddOrEditFragment extends Fragment {
                             getResources().getString(R.string.text_dialog_save),
                             getResources().getString(R.string.action_save),
                             this,
-                            SAVE_CHANGIES_REQUEST_CODE
+                            SAVE_CHANGES_REQUEST_CODE
                     );
                 } else {
                     saveNote();
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unknown menu item!");
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -130,7 +129,7 @@ public class NoteAddOrEditFragment extends Fragment {
         note.setTitle(noteTitle.getText().toString());
         note.setText(noteText.getText().toString());
         DBHelperStub.getInstance().addOrUpdateNote(note);
-        listener.onAfterChangedNote();
+        listener.onAfterChangeNote();
     }
 
     @Override
@@ -138,14 +137,12 @@ public class NoteAddOrEditFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
-                case SAVE_CHANGIES_REQUEST_CODE:
+                case SAVE_CHANGES_REQUEST_CODE:
                     saveNote();
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown menu item!");
+                    break;
             }
         }
     }
-
-
 }

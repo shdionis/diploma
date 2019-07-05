@@ -4,13 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class DBHelperStub {
 
     private static final Object lock = new Object();
     private static DBHelperStub instance;
 
+    @NonNull
+    private Comparator<Note> comparator;
+    @NonNull
+    private String filterQuery;
+    @NonNull
     private List<Note> data;
 
     @NonNull
@@ -23,10 +32,11 @@ public class DBHelperStub {
                 return instance;
             }
         } else return instance;
-
     }
 
     private DBHelperStub() {
+        comparator = UIUtil.ASC_NOTE_COMPARATOR;
+        filterQuery = "";
         initData();
     }
 
@@ -37,13 +47,28 @@ public class DBHelperStub {
             for (int j = 0; j < 30; j++) {
                 textNote.append("Note").append(i).append(j);
             }
-            Note note = new Note("Note" + i, System.currentTimeMillis() - i, textNote.toString());
+            Note note = new Note("Note" + i, System.currentTimeMillis() - i * 30 * 1000 * 60, textNote.toString());
             data.add(note);
         }
+        Collections.sort(data, comparator);
     }
 
+    @NonNull
     public List<Note> getData() {
-        return data;
+        List<Note> resultData = filterData();
+        Collections.sort(resultData, comparator);
+        return resultData;
+    }
+
+    @NonNull
+    private List<Note> filterData() {
+        List<Note> filteredData = new ArrayList<>();
+        for(Note note : data) {
+            if(note.getTitle().toLowerCase().contains(filterQuery) || note.getText().toLowerCase().contains(filterQuery)) {
+                filteredData.add(note);
+            }
+        }
+        return filteredData;
     }
 
     public void addOrUpdateNote(@NonNull Note note) {
@@ -55,10 +80,9 @@ public class DBHelperStub {
             }
         }
         data.add(note);
-
     }
 
-    public void removeNote(Integer noteId) {
+    public void removeNote(int noteId) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).getId() == noteId) {
                 data.remove(i);
@@ -76,4 +100,14 @@ public class DBHelperStub {
         }
         return null;
     }
+
+    public void resortData(boolean isAscOrder) {
+        comparator = isAscOrder ? UIUtil.ASC_NOTE_COMPARATOR : UIUtil.DESC_NOTE_COMPARATOR;
+    }
+
+    public void setFilterData(@NonNull String query) {
+        filterQuery = query.toLowerCase();
+    }
+
+
 }

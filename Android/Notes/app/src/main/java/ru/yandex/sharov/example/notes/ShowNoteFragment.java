@@ -44,8 +44,9 @@ public class ShowNoteFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, " onAttach");
-        UIUtil.assertActivityImplementsInterface(context, NoteItemOnClickListenerProvider.class);
+        UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
+
     }
 
     @Override
@@ -75,23 +76,23 @@ public class ShowNoteFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.note_show_actions_items, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete:
                 ConfirmActionDialog.showAlert(getResources().getString(R.string.text_dialog_delete),
                         getResources().getString(R.string.action_delete), this, DELETE_REQUEST_CODE);
                 break;
             case R.id.action_edit:
-                listener.onEditNote(note.getId());
+                listener.onEditingNote(note.getId());
                 break;
             default:
-                throw new IllegalArgumentException("Unknown menu item!");
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -103,10 +104,10 @@ public class ShowNoteFragment extends Fragment {
             switch (requestCode) {
                 case DELETE_REQUEST_CODE:
                     DBHelperStub.getInstance().removeNote(note.getId());
-                    listener.onAfterChangedNote();
+                    listener.onAfterDeleteNote();
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown menu item!");
+                    break;
             }
         }
     }

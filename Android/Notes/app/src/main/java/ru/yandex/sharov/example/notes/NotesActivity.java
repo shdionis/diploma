@@ -1,7 +1,9 @@
 package ru.yandex.sharov.example.notes;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +16,7 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
 
     private static final String LOG_TAG = "[LOG_TAG:NotesActivity]";
 
+    @Nullable
     private NoteItemOnClickListener listener;
 
     @Override
@@ -40,6 +43,7 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
 
     @NonNull
     private NoteItemOnClickListener createListener() {
+        Context context = this;
         return new NoteItemOnClickListener() {
             @Override
             public void onClickNoteItem(int noteId) {
@@ -48,19 +52,26 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
             }
 
             @Override
-            public void onAddNote() {
+            public void onAddingNote() {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance();
                 replaceFragment(addOrEditFragment, true);
             }
 
             @Override
-            public void onEditNote(int noteId) {
+            public void onEditingNote(int noteId) {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance(noteId);
                 replaceFragment(addOrEditFragment, true);
             }
 
             @Override
-            public void onAfterChangedNote() {
+            public void onAfterChangeNote() {
+                Toast.makeText(context, R.string.toast_save_success, Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager().popBackStack();
+            }
+
+            @Override
+            public void onAfterDeleteNote() {
+                Toast.makeText(context, R.string.toast_delete_success, Toast.LENGTH_SHORT).show();
                 getSupportFragmentManager().popBackStack();
             }
         };
@@ -71,14 +82,14 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
         shouldShowBackButton();
     }
 
-    private void shouldShowBackButton() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         getSupportFragmentManager().popBackStack();
         return super.onSupportNavigateUp();
+    }
+
+    private void shouldShowBackButton() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
     }
 
     private void replaceFragment(@NonNull Fragment fragment, boolean addToBackStack) {

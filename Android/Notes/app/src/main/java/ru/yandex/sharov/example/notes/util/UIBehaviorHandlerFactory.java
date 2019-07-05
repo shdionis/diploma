@@ -1,0 +1,82 @@
+package ru.yandex.sharov.example.notes.util;
+
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.CompoundButton;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import ru.yandex.sharov.example.notes.NotesRecyclerViewAdapter;
+import ru.yandex.sharov.example.notes.data.DBHelperStub;
+
+public class UIBehaviorHandlerFactory {
+    @NonNull
+    public static BottomSheetBehavior.BottomSheetCallback createBottomSheetCallback(@NonNull View fab, @NonNull View closeOpenBtn) {
+        return new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int newState) {
+                if (BottomSheetBehavior.STATE_DRAGGING == newState || BottomSheetBehavior.STATE_EXPANDED == newState) {
+                    fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
+                    fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+                closeOpenBtn.animate().rotation(180 * v).setDuration(0).start();
+            }
+        };
+    }
+
+    @NonNull
+    public static View.OnClickListener createCloseOpenBtnOnClickListener(@NonNull BottomSheetBehavior bottomSheetBehavior) {
+        return new View.OnClickListener() {
+            boolean toUp = true;
+
+            @Override
+            public void onClick(View view) {
+                if (toUp) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                } else {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+                toUp = !toUp;
+            }
+        };
+
+    }
+
+    @NonNull
+    public static TextWatcher createTextChangedListener(@NonNull NotesRecyclerViewAdapter adapter) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                DBHelperStub.getInstance().setFilterData(charSequence.toString());
+                adapter.setDataList(DBHelperStub.getInstance().getData());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
+    }
+
+    @NonNull
+    public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NotesRecyclerViewAdapter adapter) {
+        return (compoundButton, isChecked) -> {
+            compoundButton.animate().rotationXBy(180).start();
+            DBHelperStub.getInstance().resortData(isChecked);
+            adapter.setDataList(DBHelperStub.getInstance().getData());
+        };
+    }
+}

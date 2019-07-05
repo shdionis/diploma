@@ -42,6 +42,10 @@ public class Note {
         this.title = title;
     }
 
+    public long getDateLong() {
+        return date;
+    }
+
     @NonNull
     public String getDate() {
         return FormatUtil.getDateFormated(date);
@@ -65,6 +69,7 @@ public class Note {
         this.text = text;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Note{" +
