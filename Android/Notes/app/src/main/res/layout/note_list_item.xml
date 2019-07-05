@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="72dp">
+
+    <View
+        android:id="@+id/circle_point"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="@dimen/element_top_left_right_margin"
+        android:layout_marginLeft="@dimen/element_top_left_right_margin"
+        android:background="@drawable/ic_note_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/note_item_title"
+        style="@style/TextViewPrimary"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/primary_text_height"
+        android:layout_marginLeft="@dimen/element_top_left_right_margin"
+        android:layout_marginTop="@dimen/element_top_left_right_margin"
+        android:layout_marginRight="@dimen/element_top_left_right_margin"
+        android:gravity="top"
+        app:layout_constraintEnd_toStartOf="@+id/note_item_date"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/circle_point"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/note_item_date"
+        style="@style/TextViewMeta"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/primary_text_height"
+        android:layout_marginEnd="@dimen/element_top_left_right_margin"
+        android:layout_marginRight="@dimen/element_top_left_right_margin"
+        android:gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="@+id/note_item_title"
+        app:layout_constraintBaseline_toBaselineOf="@+id/note_item_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/note_item_title"
+        tools:text="date" />
+
+    <TextView
+        android:id="@+id/note_item_text"
+        style="@style/TextViewSecondary"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="@dimen/element_top_left_right_margin"
+        android:layout_marginLeft="@dimen/element_top_left_right_margin"
+        android:layout_marginEnd="@dimen/element_top_left_right_margin"
+        android:layout_marginRight="@dimen/element_top_left_right_margin"
+        android:gravity="left|bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/circle_point"
+        app:layout_constraintTop_toBottomOf="@+id/note_item_title"
+        tools:text="Text" />
+</androidx.constraintlayout.widget.ConstraintLayout>

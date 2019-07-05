@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Заметки</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_edit">Редактировать</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_cancel">Отменить</string>
+    <string name="text_dialog_save">Сохранить изменения?</string>
+    <string name="text_dialog_delete">Удалить заметку?</string>
+    <string name="bottom_sheet_peek">Дополнительно</string>
+    <string name="toast_save_success">Заметка сохранена</string>
+    <string name="toast_delete_success">Замтека удалена</string>
+</resources>
