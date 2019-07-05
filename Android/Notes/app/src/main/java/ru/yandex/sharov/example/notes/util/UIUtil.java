@@ -22,7 +22,7 @@ public class UIUtil {
     }
 
     public static void hideKeyTool(@NonNull Activity activity) {
-        if(activity.getCurrentFocus()!=null) {
+        if (activity.getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }

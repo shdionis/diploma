@@ -22,8 +22,7 @@ import ru.yandex.sharov.example.notes.data.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class ShowNoteFragment extends Fragment {
-    private static final String LOG_TAG = "LOG_TAG";
-    private static final String ENTITY_NAME = "ShowNoteFragment";
+    private static final String LOG_TAG = "[LOG_TAG:ShowNote]";
     private static final int DELETE_REQUEST_CODE = 0;
     private static final String NOTE_ARG = "note";
 
@@ -53,7 +52,7 @@ public class ShowNoteFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, ENTITY_NAME + " onCreate");
+        Log.d(LOG_TAG, " onCreate");
         Bundle args = getArguments();
         if (args != null) {
             this.note = DBHelperStub.getInstance().getNoteById(args.getInt(NOTE_ARG));
@@ -63,7 +62,7 @@ public class ShowNoteFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(LOG_TAG, ENTITY_NAME + " onCreateView");
+        Log.d(LOG_TAG, " onCreateView");
         View rootV = inflater.inflate(R.layout.note_view_fragment, container, false);
         TextView tvDateNote = rootV.findViewById(R.id.note_date);
         TextView tvTitleNote = rootV.findViewById(R.id.note_title);

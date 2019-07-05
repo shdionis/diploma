@@ -42,12 +42,13 @@ public class DBHelperStub {
 
     private void initData() {
         data = new ArrayList<>();
+        final int TIME_STEP = 30 * 1000 * 60;
         for (int i = 1; i <= 50; i++) {
             StringBuilder textNote = new StringBuilder();
             for (int j = 0; j < 30; j++) {
                 textNote.append("Note").append(i).append(j);
             }
-            Note note = new Note("Note" + i, System.currentTimeMillis() - i * 30 * 1000 * 60, textNote.toString());
+            Note note = new Note("Note" + i, System.currentTimeMillis() - i * TIME_STEP, textNote.toString());
             data.add(note);
         }
         Collections.sort(data, comparator);
@@ -108,6 +109,4 @@ public class DBHelperStub {
     public void setFilterData(@NonNull String query) {
         filterQuery = query.toLowerCase();
     }
-
-
 }

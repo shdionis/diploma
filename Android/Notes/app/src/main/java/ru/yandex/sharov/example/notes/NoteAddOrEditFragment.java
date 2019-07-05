@@ -44,6 +44,7 @@ public class NoteAddOrEditFragment extends Fragment {
         return fragment;
     }
 
+    @NonNull
     public static NoteAddOrEditFragment newInstance() {
         NoteAddOrEditFragment fragment = new NoteAddOrEditFragment();
         return fragment;
@@ -66,6 +67,9 @@ public class NoteAddOrEditFragment extends Fragment {
         if (args != null) {
             Log.d(LOG_TAG, " onCreate-fromArgs");
             note = DBHelperStub.getInstance().getNoteById(args.getInt(NOTE_ID_ARG));
+        } else {
+            note = new Note();
+            isNewNote = true;
         }
     }
 
@@ -77,10 +81,6 @@ public class NoteAddOrEditFragment extends Fragment {
         noteText = rootV.findViewById(R.id.note_edit_text);
         noteTitle = rootV.findViewById(R.id.note_edit_title);
         TextView noteDate = rootV.findViewById(R.id.note_date);
-        if (note == null) {
-            note = new Note();
-            isNewNote = true;
-        }
         noteDate.setText(note.getDate());
         if (savedInstanceState == null) {
             noteTitle.setText(note.getTitle());

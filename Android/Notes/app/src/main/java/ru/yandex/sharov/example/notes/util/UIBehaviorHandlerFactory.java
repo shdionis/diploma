@@ -18,16 +18,21 @@ public class UIBehaviorHandlerFactory {
         return new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int newState) {
+                final int DURATION = 300;
+                final float SCALE_HIDE = 0;
+                final float SCALE_SHOW = 1;
                 if (BottomSheetBehavior.STATE_DRAGGING == newState || BottomSheetBehavior.STATE_EXPANDED == newState) {
-                    fab.animate().scaleX(0).scaleY(0).setDuration(300).start();
+                    fab.animate().scaleX(SCALE_HIDE).scaleY(SCALE_HIDE).setDuration(DURATION).start();
                 } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
-                    fab.animate().scaleX(1).scaleY(1).setDuration(300).start();
+                    fab.animate().scaleX(SCALE_SHOW).scaleY(SCALE_SHOW).setDuration(DURATION).start();
                 }
             }
 
             @Override
             public void onSlide(@NonNull View view, float v) {
-                closeOpenBtn.animate().rotation(180 * v).setDuration(0).start();
+                final int DURATION = 0;
+                final float ROTATE_ANGLE = 180;
+                closeOpenBtn.animate().rotation(ROTATE_ANGLE * v).setDuration(DURATION).start();
             }
         };
     }
@@ -74,7 +79,8 @@ public class UIBehaviorHandlerFactory {
     @NonNull
     public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NotesRecyclerViewAdapter adapter) {
         return (compoundButton, isChecked) -> {
-            compoundButton.animate().rotationXBy(180).start();
+            final float ROTATE_ANGLE = 180;
+            compoundButton.animate().rotationXBy(ROTATE_ANGLE).start();
             DBHelperStub.getInstance().resortData(isChecked);
             adapter.setDataList(DBHelperStub.getInstance().getData());
         };
