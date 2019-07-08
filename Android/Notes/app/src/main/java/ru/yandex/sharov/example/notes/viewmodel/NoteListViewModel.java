@@ -17,9 +17,9 @@ import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class NoteListViewModel extends ViewModel implements NoteListDataProvider {
     @NonNull
-    private final MutableLiveData<List<Note>> DATA = new MutableLiveData<>();
+    private final MutableLiveData<List<Note>> data = new MutableLiveData<>();
     @NonNull
-    private final MutableLiveData<Boolean> SHOW_PROGRESS_BAR = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> showProgressBar = new MutableLiveData<>();
     @NonNull
     private LiveData<List<Note>> fullData;
     @NonNull
@@ -41,18 +41,16 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     protected void onCleared() {
         super.onCleared();
         fullData.removeObserver(fullDataObserver);
-
-
     }
 
     @NonNull
     public LiveData<List<Note>> getData() {
-        return DATA;
+        return data;
     }
 
     @NonNull
     public LiveData<Boolean> isShowProgressBar() {
-        return SHOW_PROGRESS_BAR;
+        return showProgressBar;
     }
 
     @NonNull
@@ -78,7 +76,7 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     private void refreshData(@NonNull List<Note> notes) {
         List<Note> resultData = filterData(notes);
         Collections.sort(resultData, comparator);
-        DATA.setValue(resultData);
+        data.setValue(resultData);
     }
 
     public void refreshData() {
@@ -92,8 +90,8 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     private class FullDataObserver implements Observer<List<Note>> {
         @Override
         public void onChanged(@NonNull List<Note> notes) {
-            if (SHOW_PROGRESS_BAR.getValue() == null || SHOW_PROGRESS_BAR.getValue() == Boolean.FALSE) {
-                SHOW_PROGRESS_BAR.setValue(Boolean.TRUE);
+            if (showProgressBar.getValue() == null || showProgressBar.getValue() == Boolean.FALSE) {
+                showProgressBar.setValue(Boolean.TRUE);
             }
             refreshData(notes);
         }

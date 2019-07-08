@@ -16,7 +16,7 @@ public class DBHelperStub {
     private static final Object lock = new Object();
     private static DBHelperStub instance;
     @NonNull
-    private final MutableLiveData<List<Note>> DATA = new MutableLiveData<>();
+    private final MutableLiveData<List<Note>> data = new MutableLiveData<>();
 
     @NonNull
     public static DBHelperStub getInstance() {
@@ -34,16 +34,16 @@ public class DBHelperStub {
     }
 
     private void lazyInitData() {
-        NoteGenAsyncTask noteGenAsyncTask = new NoteGenAsyncTask(DATA);
+        NoteGenAsyncTask noteGenAsyncTask = new NoteGenAsyncTask(data);
         noteGenAsyncTask.execute();
     }
 
     @NonNull
     public LiveData<List<Note>> getData() {
-        if (DATA.getValue() == null) {
+        if (data.getValue() == null) {
             lazyInitData();
         }
-        return DATA;
+        return data;
     }
 
     public void addOrUpdateNote(@NonNull Note note) {
@@ -52,12 +52,12 @@ public class DBHelperStub {
             if (notes.get(i).getId() == note.getId()) {
                 notes.remove(i);
                 notes.add(i, note);
-                DATA.setValue(notes);
+                data.setValue(notes);
                 return;
             }
         }
         notes.add(note);
-        DATA.setValue(notes);
+        data.setValue(notes);
     }
 
     public void removeNote(int noteId) {
@@ -68,7 +68,7 @@ public class DBHelperStub {
                 break;
             }
         }
-        DATA.setValue(notes);
+        data.setValue(notes);
     }
 
     @Nullable
@@ -83,29 +83,34 @@ public class DBHelperStub {
 
     @NonNull
     private List<Note> getDataValue() {
-        return DATA.getValue() == null ? Collections.emptyList() : DATA.getValue();
+        return data.getValue() == null ? Collections.emptyList() : data.getValue();
     }
 
     private static class NoteGenAsyncTask extends AsyncTask<Integer, Void, List<Note>> {
 
-        private final MutableLiveData<List<Note>> DATA;
+        private final MutableLiveData<List<Note>> data;
 
         NoteGenAsyncTask(MutableLiveData<List<Note>> data) {
-            this.DATA = data;
+            this.data = data;
         }
 
         @Override
         protected List<Note> doInBackground(Integer... args) {
             List<Note> generatedData = new ArrayList<>();
+            final int TIME_STEP = 30 * 1000 * 60;
+            final int ITERATIONS = 10000;
+            final int TEXT_WORDS_COUNT = 30;
+            final int SLEEP_TIME = 1500;
+
             try {
-                Thread.sleep(3000);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            final int TIME_STEP = 30 * 1000 * 60;
-            for (int i = 1; i <= 10000; i++) {
+
+            for (int i = 1; i <= ITERATIONS; i++) {
                 StringBuilder textNote = new StringBuilder();
-                for (int j = 0; j < 30; j++) {
+                for (int j = 0; j < TEXT_WORDS_COUNT; j++) {
                     textNote.append("Note").append(i).append(j);
                 }
                 Note note = new Note("Note" + i, System.currentTimeMillis() - i*(long)TIME_STEP, textNote.toString());
@@ -116,7 +121,7 @@ public class DBHelperStub {
 
         @Override
         protected void onPostExecute(List<Note> notes) {
-            this.DATA.postValue(notes);
+            this.data.postValue(notes);
         }
     }
 }

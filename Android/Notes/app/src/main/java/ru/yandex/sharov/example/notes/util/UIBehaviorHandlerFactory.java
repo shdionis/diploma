@@ -1,5 +1,6 @@
 package ru.yandex.sharov.example.notes.util;
 
+import android.animation.Animator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -79,9 +80,11 @@ public class UIBehaviorHandlerFactory {
     public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NoteListDataProvider noteListDataProvider) {
         return (compoundButton, isChecked) -> {
             final float ROTATE_ANGLE = 180;
+            compoundButton.setRotationX(isChecked ? 180 : 0);
             compoundButton.animate().rotationXBy(ROTATE_ANGLE).start();
             noteListDataProvider.resortData(isChecked);
             noteListDataProvider.refreshData();
+
         };
     }
 }
