@@ -9,8 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import ru.yandex.sharov.example.notes.NotesRecyclerViewAdapter;
-import ru.yandex.sharov.example.notes.data.DBHelperStub;
+import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
 
 public class UIBehaviorHandlerFactory {
     @NonNull
@@ -56,7 +55,7 @@ public class UIBehaviorHandlerFactory {
     }
 
     @NonNull
-    public static TextWatcher createTextChangedListener(@NonNull NotesRecyclerViewAdapter adapter) {
+    public static TextWatcher createTextChangedListener(@NonNull NoteListViewModel noteListVM) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -65,8 +64,8 @@ public class UIBehaviorHandlerFactory {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                DBHelperStub.getInstance().setFilterData(charSequence.toString());
-                adapter.setDataList(DBHelperStub.getInstance().getData());
+                noteListVM.setFilterData(charSequence.toString());
+                noteListVM.refreshData();
             }
 
             @Override
@@ -77,12 +76,12 @@ public class UIBehaviorHandlerFactory {
     }
 
     @NonNull
-    public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NotesRecyclerViewAdapter adapter) {
+    public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NoteListViewModel noteListVM) {
         return (compoundButton, isChecked) -> {
             final float ROTATE_ANGLE = 180;
             compoundButton.animate().rotationXBy(ROTATE_ANGLE).start();
-            DBHelperStub.getInstance().resortData(isChecked);
-            adapter.setDataList(DBHelperStub.getInstance().getData());
+            noteListVM.resortData(isChecked);
+            noteListVM.refreshData();
         };
     }
 }

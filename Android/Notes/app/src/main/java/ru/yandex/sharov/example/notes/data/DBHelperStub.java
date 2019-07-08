@@ -2,6 +2,8 @@ package ru.yandex.sharov.example.notes.data;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,13 +16,8 @@ public class DBHelperStub {
 
     private static final Object lock = new Object();
     private static DBHelperStub instance;
-
     @NonNull
-    private Comparator<Note> comparator;
-    @NonNull
-    private String filterQuery;
-    @NonNull
-    private List<Note> data;
+    private MutableLiveData<List<Note>> data = new MutableLiveData<>();
 
     @NonNull
     public static DBHelperStub getInstance() {
@@ -35,13 +32,11 @@ public class DBHelperStub {
     }
 
     private DBHelperStub() {
-        comparator = UIUtil.ASC_NOTE_COMPARATOR;
-        filterQuery = "";
         initData();
     }
 
     private void initData() {
-        data = new ArrayList<>();
+        List<Note> generatedData = new ArrayList<>();
         final int TIME_STEP = 30 * 1000 * 60;
         for (int i = 1; i <= 50; i++) {
             StringBuilder textNote = new StringBuilder();
@@ -49,64 +44,47 @@ public class DBHelperStub {
                 textNote.append("Note").append(i).append(j);
             }
             Note note = new Note("Note" + i, System.currentTimeMillis() - i * TIME_STEP, textNote.toString());
-            data.add(note);
+            generatedData.add(note);
         }
-        Collections.sort(data, comparator);
+        data.setValue(generatedData);
     }
 
     @NonNull
-    public List<Note> getData() {
-        List<Note> resultData = filterData();
-        Collections.sort(resultData, comparator);
-        return resultData;
-    }
-
-    @NonNull
-    private List<Note> filterData() {
-        List<Note> filteredData = new ArrayList<>();
-        for(Note note : data) {
-            if(note.getTitle().toLowerCase().contains(filterQuery) || note.getText().toLowerCase().contains(filterQuery)) {
-                filteredData.add(note);
-            }
-        }
-        return filteredData;
+    public LiveData<List<Note>> getData() {
+        return data;
     }
 
     public void addOrUpdateNote(@NonNull Note note) {
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).getId() == note.getId()) {
-                data.remove(i);
-                data.add(i, note);
+        List<Note> notes = data.getValue();
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getId() == note.getId()) {
+                notes.remove(i);
+                notes.add(i, note);
                 return;
             }
         }
-        data.add(note);
+        notes.add(note);
+        data.setValue(notes);
     }
 
     public void removeNote(int noteId) {
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).getId() == noteId) {
-                data.remove(i);
+        List<Note> notes = data.getValue();
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getId() == noteId) {
+                notes.remove(i);
                 return;
             }
         }
+        data.setValue(notes);
     }
 
     @Nullable
     public Note getNoteById(int noteId) {
-        for (Note note : data) {
+        for (Note note : data.getValue()) {
             if (note.getId() == noteId) {
                 return note;
             }
         }
         return null;
-    }
-
-    public void resortData(boolean isAscOrder) {
-        comparator = isAscOrder ? UIUtil.ASC_NOTE_COMPARATOR : UIUtil.DESC_NOTE_COMPARATOR;
-    }
-
-    public void setFilterData(@NonNull String query) {
-        filterQuery = query.toLowerCase();
     }
 }
