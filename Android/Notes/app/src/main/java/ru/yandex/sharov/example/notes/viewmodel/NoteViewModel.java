@@ -10,9 +10,10 @@ import ru.yandex.sharov.example.notes.data.DBHelperStub;
 import ru.yandex.sharov.example.notes.data.Note;
 
 public class NoteViewModel extends ViewModel {
-    MutableLiveData<Note> note = new MutableLiveData<>();
     @NonNull
-    DBHelperStub dbHelper;
+    private final MutableLiveData<Note> NOTE = new MutableLiveData<>();
+    @NonNull
+    private DBHelperStub dbHelper;
 
     public NoteViewModel(@NonNull DBHelperStub dbHelper) {
         this.dbHelper = dbHelper;
@@ -20,27 +21,43 @@ public class NoteViewModel extends ViewModel {
 
     @NonNull
     public LiveData<Note> getNote() {
-        return note;
+        return NOTE;
     }
 
     public void addOrUpdateNote() {
-        dbHelper.addOrUpdateNote(this.note.getValue());
+        if(NOTE.getValue()!=null) {
+            dbHelper.addOrUpdateNote(NOTE.getValue());
+        }
     }
 
     public void removeNote() {
-        dbHelper.removeNote(this.note.getValue().getId());
+        if(NOTE.getValue() == null) {
+            return;
+        }
+        dbHelper.removeNote(NOTE.getValue().getId());
     }
 
     public void getNoteById(@Nullable Integer noteId) {
-        if(noteId==null) {
-            this.note.setValue(new Note());
+        if (noteId == null) {
+            this.NOTE.setValue(new Note());
             return;
         }
         Note note = dbHelper.getNoteById(noteId);
         if (note != null) {
-            this.note.setValue(note);
+            this.NOTE.setValue(note);
         } else {
-            this.note.setValue(new Note());
+            this.NOTE.setValue(new Note());
         }
+    }
+
+    public void saveState(String text, String title) {
+        if(NOTE.getValue() == null) {
+            return;
+        }
+        Note n = NOTE.getValue();
+        n.setDate(System.currentTimeMillis());
+        n.setText(text);
+        n.setTitle(title);
+        NOTE.setValue(n);
     }
 }

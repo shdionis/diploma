@@ -16,10 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import ru.yandex.sharov.example.notes.data.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
@@ -48,7 +46,7 @@ public class ShowNoteFragment extends Fragment {
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
         NoteListViewModelFactory factory = new NoteListViewModelFactory();
-        noteViewModel = ViewModelProviders.of(requireActivity(), factory).get(NoteViewModel.class);
+        noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
     }
 
     @Override
@@ -71,13 +69,11 @@ public class ShowNoteFragment extends Fragment {
         TextView tvDateNote = rootV.findViewById(R.id.note_date);
         TextView tvTitleNote = rootV.findViewById(R.id.note_title);
         TextView tvTextNote = rootV.findViewById(R.id.note_text);
-        noteViewModel.getNote().observe(this.getViewLifecycleOwner(), new Observer<Note>() {
-            @Override
-            public void onChanged(Note note) {
-                tvDateNote.setText(note.getDate());
-                tvTitleNote.setText(note.getTitle());
-                tvTextNote.setText(note.getText());
-            }
+        noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
+            Log.d(LOG_TAG, "ObserverCallback");
+            tvDateNote.setText(note.getDate());
+            tvTitleNote.setText(note.getTitle());
+            tvTextNote.setText(note.getText());
         });
         return rootV;
     }

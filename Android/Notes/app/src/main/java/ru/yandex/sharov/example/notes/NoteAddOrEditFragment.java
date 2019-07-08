@@ -17,7 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import ru.yandex.sharov.example.notes.data.Note;
@@ -48,8 +47,7 @@ public class NoteAddOrEditFragment extends Fragment {
 
     @NonNull
     public static NoteAddOrEditFragment newInstance() {
-        NoteAddOrEditFragment fragment = new NoteAddOrEditFragment();
-        return fragment;
+        return new NoteAddOrEditFragment();
     }
 
     @Override
@@ -59,7 +57,7 @@ public class NoteAddOrEditFragment extends Fragment {
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
         NoteListViewModelFactory factory = new NoteListViewModelFactory();
-        noteViewModel = ViewModelProviders.of(requireActivity(), factory).get(NoteViewModel.class);
+        noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
     }
 
     @Override
@@ -87,10 +85,8 @@ public class NoteAddOrEditFragment extends Fragment {
         TextView noteDate = rootV.findViewById(R.id.note_date);
         noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
             noteDate.setText(note.getDate());
-            if (savedInstanceState == null) {
-                noteTitle.setText(note.getTitle());
-                noteText.setText(note.getText());
-            }
+            noteTitle.setText(note.getTitle());
+            noteText.setText(note.getText());
         });
         return rootV;
     }
@@ -146,5 +142,11 @@ public class NoteAddOrEditFragment extends Fragment {
                     break;
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        noteViewModel.saveState(noteText.getText().toString(), noteTitle.getText().toString());
     }
 }

@@ -1,5 +1,6 @@
 package ru.yandex.sharov.example.notes;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,9 +30,7 @@ public class NotesListFragment extends Fragment {
 
     private static final String LOG_TAG = "[LOG_TAG:NoteLstFrgmnt]";
 
-    private RecyclerView recyclerView;
     private NotesRecyclerViewAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
     private NoteListViewModel noteListViewModel;
     private NoteItemOnClickListener listener;
 
@@ -48,21 +47,30 @@ public class NotesListFragment extends Fragment {
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
     }
 
+    @SuppressLint("RestrictedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
         View rootV = inflater.inflate(R.layout.notes_list_fragment, container, false);
-        noteListViewModel = ViewModelProviders.of(requireActivity(), new NoteListViewModelFactory()).get(NoteListViewModel.class);
+        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory()).get(NoteListViewModel.class);
         FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> listener.onAddingNote());
-        initNoteListRecyclerView(rootV);
-        initBottomSheet(rootV, addNoteFab);
+        noteListViewModel.isShowProgressBar().observe(this, progressShowFlag -> {
+            if (progressShowFlag) {
+                rootV.findViewById(R.id.progress_bar_load_data).setVisibility(View.INVISIBLE);
+                rootV.findViewById(R.id.note_list_views_container).setVisibility(View.VISIBLE);
+                initNoteListRecyclerView(rootV);
+                initBottomSheet(rootV, addNoteFab);
+            }
+        });
+
         return rootV;
     }
 
     private void initBottomSheet(@NonNull View rootV, @NonNull FloatingActionButton fab) {
         View bottomSheet = rootV.findViewById(R.id.bottom_sheet);
+        bottomSheet.setVisibility(View.VISIBLE);
         View closeOpenBtn = rootV.findViewById(R.id.bottom_sheet_close_open_btn);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setBottomSheetCallback(
@@ -78,14 +86,17 @@ public class NotesListFragment extends Fragment {
     }
 
     private void initNoteListRecyclerView(@NonNull View rootV) {
-        recyclerView = rootV.findViewById(R.id.recycler_view_note_list);
-        layoutManager = new LinearLayoutManager(requireContext());
+        RecyclerView recyclerView = rootV.findViewById(R.id.recycler_view_note_list);
+        recyclerView.setVisibility(View.VISIBLE);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new NotesRecyclerViewAdapter();
         adapter.setListener(listener);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL); //TODO: сделать отступ под иконкой
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setAdapter(adapter);
-        noteListViewModel.getData().observe(getViewLifecycleOwner(), notes -> adapter.setDataList(notes));
+        noteListViewModel.getData().observe(getViewLifecycleOwner(), notes -> {
+            adapter.setDataList(notes);
+        });
     }
 }

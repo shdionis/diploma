@@ -8,15 +8,16 @@ import ru.yandex.sharov.example.notes.data.DBHelperStub;
 
 public class NoteListViewModelFactory implements ViewModelProvider.Factory {
 
-    private DBHelperStub dbHelper = DBHelperStub.getInstance();
+    @NonNull
+    private final DBHelperStub DB_HELPER = DBHelperStub.getInstance();
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(NoteListViewModel.class)) {
-            return (T) new NoteListViewModel(dbHelper);
+            return (T) new NoteListViewModel(DB_HELPER);
         } else if(modelClass.isAssignableFrom(NoteViewModel.class)) {
-            return (T) new NoteViewModel(dbHelper);
+            return (T) new NoteViewModel(DB_HELPER);
         } else {
             throw new IllegalArgumentException("Unknown ViewModel class!");
         }

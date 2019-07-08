@@ -15,8 +15,11 @@ import ru.yandex.sharov.example.notes.data.DBHelperStub;
 import ru.yandex.sharov.example.notes.data.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
-public class NoteListViewModel extends ViewModel {
-    private MutableLiveData<List<Note>> data = new MutableLiveData<>();
+public class NoteListViewModel extends ViewModel implements NoteListDataProvider {
+    @NonNull
+    private final MutableLiveData<List<Note>> DATA = new MutableLiveData<>();
+    @NonNull
+    private final MutableLiveData<Boolean> SHOW_PROGRESS_BAR = new MutableLiveData<>();
     @NonNull
     private LiveData<List<Note>> fullData;
     @NonNull
@@ -29,26 +32,35 @@ public class NoteListViewModel extends ViewModel {
     public NoteListViewModel(@NonNull DBHelperStub dbHelper) {
         comparator = UIUtil.ASC_NOTE_COMPARATOR;
         filterQuery = "";
-        fullDataObserver = new FullDataObserver<List<Note>>();
+        fullDataObserver = new FullDataObserver();
         fullData = dbHelper.getData();
         fullData.observeForever(fullDataObserver);
     }
 
     @Override
     protected void onCleared() {
+        super.onCleared();
         fullData.removeObserver(fullDataObserver);
+
+
     }
 
     @NonNull
     public LiveData<List<Note>> getData() {
-        return data;
+        return DATA;
+    }
+
+    @NonNull
+    public LiveData<Boolean> isShowProgressBar() {
+        return SHOW_PROGRESS_BAR;
     }
 
     @NonNull
     private List<Note> filterData(@NonNull List<Note> notes) {
         List<Note> filteredData = new ArrayList<>();
-        for(Note note : notes) {
-            if(note.getTitle().toLowerCase().contains(filterQuery) || note.getText().toLowerCase().contains(filterQuery)) {
+        for (Note note : notes) {
+            if (note.getTitle().toLowerCase().contains(filterQuery) ||
+                    (note.getText() != null && note.getText().toLowerCase().contains(filterQuery))) {
                 filteredData.add(note);
             }
         }
@@ -66,16 +78,23 @@ public class NoteListViewModel extends ViewModel {
     private void refreshData(@NonNull List<Note> notes) {
         List<Note> resultData = filterData(notes);
         Collections.sort(resultData, comparator);
-        data.setValue(resultData);
+        DATA.setValue(resultData);
     }
 
-    public void refreshData(){
-        refreshData(fullData.getValue());
+    public void refreshData() {
+        if (fullData.getValue() != null) {
+            refreshData(fullData.getValue());
+        } else {
+            refreshData(Collections.emptyList());
+        }
     }
 
-    private class FullDataObserver<T> implements Observer<List<Note>> {
+    private class FullDataObserver implements Observer<List<Note>> {
         @Override
         public void onChanged(@NonNull List<Note> notes) {
+            if (SHOW_PROGRESS_BAR.getValue() == null || SHOW_PROGRESS_BAR.getValue() == Boolean.FALSE) {
+                SHOW_PROGRESS_BAR.setValue(Boolean.TRUE);
+            }
             refreshData(notes);
         }
     }
