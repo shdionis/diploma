@@ -17,10 +17,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
-import ru.yandex.sharov.example.notes.data.DBHelperStub;
 import ru.yandex.sharov.example.notes.data.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
+import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
+import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
 
 public class NoteAddOrEditFragment extends Fragment {
 
@@ -30,9 +33,8 @@ public class NoteAddOrEditFragment extends Fragment {
 
     private EditText noteTitle;
     private EditText noteText;
-    @NonNull
-    private Note note;
     private NoteItemOnClickListener listener;
+    private NoteViewModel noteViewModel;
     private boolean isNewNote = false;
 
     @NonNull
@@ -56,6 +58,8 @@ public class NoteAddOrEditFragment extends Fragment {
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
+        NoteListViewModelFactory factory = new NoteListViewModelFactory();
+        noteViewModel = ViewModelProviders.of(requireActivity(), factory).get(NoteViewModel.class);
     }
 
     @Override
@@ -66,9 +70,9 @@ public class NoteAddOrEditFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             Log.d(LOG_TAG, " onCreate-fromArgs");
-            note = DBHelperStub.getInstance().getNoteById(args.getInt(NOTE_ID_ARG));
+            noteViewModel.getNoteById(args.getInt(NOTE_ID_ARG));
         } else {
-            note = new Note();
+            noteViewModel.getNoteById(null);
             isNewNote = true;
         }
     }
@@ -81,19 +85,14 @@ public class NoteAddOrEditFragment extends Fragment {
         noteText = rootV.findViewById(R.id.note_edit_text);
         noteTitle = rootV.findViewById(R.id.note_edit_title);
         TextView noteDate = rootV.findViewById(R.id.note_date);
-        noteDate.setText(note.getDate());
-        if (savedInstanceState == null) {
-            noteTitle.setText(note.getTitle());
-            noteText.setText(note.getText());
-        }
+        noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
+            noteDate.setText(note.getDate());
+            if (savedInstanceState == null) {
+                noteTitle.setText(note.getTitle());
+                noteText.setText(note.getText());
+            }
+        });
         return rootV;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(LOG_TAG, " onDestroy");
-        note = null;
     }
 
     @Override
@@ -125,10 +124,13 @@ public class NoteAddOrEditFragment extends Fragment {
     }
 
     private void saveNote() {
-        note.setDate(System.currentTimeMillis());
-        note.setTitle(noteTitle.getText().toString());
-        note.setText(noteText.getText().toString());
-        DBHelperStub.getInstance().addOrUpdateNote(note);
+        Note note = noteViewModel.getNote().getValue();
+        if (note != null) {
+            note.setDate(System.currentTimeMillis());
+            note.setTitle(noteTitle.getText().toString());
+            note.setText(noteText.getText().toString());
+            noteViewModel.addOrUpdateNote();
+        }
         listener.onAfterChangeNote();
     }
 
