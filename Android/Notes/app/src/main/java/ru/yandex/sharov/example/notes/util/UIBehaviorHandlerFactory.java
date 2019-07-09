@@ -1,5 +1,6 @@
 package ru.yandex.sharov.example.notes.util;
 
+import android.animation.Animator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -9,8 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import ru.yandex.sharov.example.notes.NotesRecyclerViewAdapter;
-import ru.yandex.sharov.example.notes.data.DBHelperStub;
+import ru.yandex.sharov.example.notes.viewmodel.NoteListDataProvider;
 
 public class UIBehaviorHandlerFactory {
     @NonNull
@@ -56,7 +56,7 @@ public class UIBehaviorHandlerFactory {
     }
 
     @NonNull
-    public static TextWatcher createTextChangedListener(@NonNull NotesRecyclerViewAdapter adapter) {
+    public static TextWatcher createTextChangedListener(@NonNull NoteListDataProvider noteListDataProvider) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -65,8 +65,8 @@ public class UIBehaviorHandlerFactory {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                DBHelperStub.getInstance().setFilterData(charSequence.toString());
-                adapter.setDataList(DBHelperStub.getInstance().getData());
+                noteListDataProvider.setFilterData(charSequence.toString());
+                noteListDataProvider.refreshData();
             }
 
             @Override
@@ -77,12 +77,14 @@ public class UIBehaviorHandlerFactory {
     }
 
     @NonNull
-    public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NotesRecyclerViewAdapter adapter) {
+    public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NoteListDataProvider noteListDataProvider) {
         return (compoundButton, isChecked) -> {
             final float ROTATE_ANGLE = 180;
+            compoundButton.setRotationX(isChecked ? 180 : 0);
             compoundButton.animate().rotationXBy(ROTATE_ANGLE).start();
-            DBHelperStub.getInstance().resortData(isChecked);
-            adapter.setDataList(DBHelperStub.getInstance().getData());
+            noteListDataProvider.resortData(isChecked);
+            noteListDataProvider.refreshData();
+
         };
     }
 }

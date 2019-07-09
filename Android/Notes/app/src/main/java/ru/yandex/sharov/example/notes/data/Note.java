@@ -13,7 +13,7 @@ public class Note {
     private int id;
     private long date;
     @NonNull
-    private String title;
+    private String title = "";
     @Nullable
     private String text;
 

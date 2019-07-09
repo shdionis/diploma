@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 
 import ru.yandex.sharov.example.notes.data.Note;
@@ -21,7 +22,11 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
     @Nullable
     private List<Note> dataList;
     @Nullable
-    NoteItemOnClickListener noteItemOnClickListener;
+    private NoteItemOnClickListener noteItemOnClickListener;
+
+    public NotesRecyclerViewAdapter() {
+        dataList = Collections.emptyList();
+    }
 
     public void setListener(@NonNull NoteItemOnClickListener noteItemOnClickListener) {
         this.noteItemOnClickListener = noteItemOnClickListener;

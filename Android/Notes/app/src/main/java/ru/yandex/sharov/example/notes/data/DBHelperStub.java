@@ -1,26 +1,22 @@
 package ru.yandex.sharov.example.notes.data;
 
+import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class DBHelperStub {
 
     private static final Object lock = new Object();
     private static DBHelperStub instance;
-
     @NonNull
-    private Comparator<Note> comparator;
-    @NonNull
-    private String filterQuery;
-    @NonNull
-    private List<Note> data;
+    private final MutableLiveData<List<Note>> data = new MutableLiveData<>();
 
     @NonNull
     public static DBHelperStub getInstance() {
@@ -35,66 +31,49 @@ public class DBHelperStub {
     }
 
     private DBHelperStub() {
-        comparator = UIUtil.ASC_NOTE_COMPARATOR;
-        filterQuery = "";
-        initData();
     }
 
-    private void initData() {
-        data = new ArrayList<>();
-        final int TIME_STEP = 30 * 1000 * 60;
-        for (int i = 1; i <= 50; i++) {
-            StringBuilder textNote = new StringBuilder();
-            for (int j = 0; j < 30; j++) {
-                textNote.append("Note").append(i).append(j);
-            }
-            Note note = new Note("Note" + i, System.currentTimeMillis() - i * TIME_STEP, textNote.toString());
-            data.add(note);
-        }
-        Collections.sort(data, comparator);
+    private void lazyInitData() {
+        NoteGenAsyncTask noteGenAsyncTask = new NoteGenAsyncTask(data);
+        noteGenAsyncTask.execute();
     }
 
     @NonNull
-    public List<Note> getData() {
-        List<Note> resultData = filterData();
-        Collections.sort(resultData, comparator);
-        return resultData;
-    }
-
-    @NonNull
-    private List<Note> filterData() {
-        List<Note> filteredData = new ArrayList<>();
-        for(Note note : data) {
-            if(note.getTitle().toLowerCase().contains(filterQuery) || note.getText().toLowerCase().contains(filterQuery)) {
-                filteredData.add(note);
-            }
+    public LiveData<List<Note>> getData() {
+        if (data.getValue() == null) {
+            lazyInitData();
         }
-        return filteredData;
+        return data;
     }
 
     public void addOrUpdateNote(@NonNull Note note) {
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).getId() == note.getId()) {
-                data.remove(i);
-                data.add(i, note);
+        List<Note> notes = getDataValue();
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getId() == note.getId()) {
+                notes.remove(i);
+                notes.add(i, note);
+                data.setValue(notes);
                 return;
             }
         }
-        data.add(note);
+        notes.add(note);
+        data.setValue(notes);
     }
 
     public void removeNote(int noteId) {
-        for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).getId() == noteId) {
-                data.remove(i);
-                return;
+        List<Note> notes = getDataValue();
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).getId() == noteId) {
+                notes.remove(i);
+                break;
             }
         }
+        data.setValue(notes);
     }
 
     @Nullable
     public Note getNoteById(int noteId) {
-        for (Note note : data) {
+        for (Note note : getDataValue()) {
             if (note.getId() == noteId) {
                 return note;
             }
@@ -102,11 +81,47 @@ public class DBHelperStub {
         return null;
     }
 
-    public void resortData(boolean isAscOrder) {
-        comparator = isAscOrder ? UIUtil.ASC_NOTE_COMPARATOR : UIUtil.DESC_NOTE_COMPARATOR;
+    @NonNull
+    private List<Note> getDataValue() {
+        return data.getValue() == null ? Collections.emptyList() : data.getValue();
     }
 
-    public void setFilterData(@NonNull String query) {
-        filterQuery = query.toLowerCase();
+    private static class NoteGenAsyncTask extends AsyncTask<Integer, Void, List<Note>> {
+
+        private final MutableLiveData<List<Note>> data;
+
+        NoteGenAsyncTask(MutableLiveData<List<Note>> data) {
+            this.data = data;
+        }
+
+        @Override
+        protected List<Note> doInBackground(Integer... args) {
+            List<Note> generatedData = new ArrayList<>();
+            final int TIME_STEP = 30 * 1000 * 60;
+            final int ITERATIONS = 10000;
+            final int TEXT_WORDS_COUNT = 30;
+            final int SLEEP_TIME = 1500;
+
+            try {
+                Thread.sleep(SLEEP_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            for (int i = 1; i <= ITERATIONS; i++) {
+                StringBuilder textNote = new StringBuilder();
+                for (int j = 0; j < TEXT_WORDS_COUNT; j++) {
+                    textNote.append("Note").append(i).append(j);
+                }
+                Note note = new Note("Note" + i, System.currentTimeMillis() - i*(long)TIME_STEP, textNote.toString());
+                generatedData.add(note);
+            }
+            return generatedData;
+        }
+
+        @Override
+        protected void onPostExecute(List<Note> notes) {
+            this.data.postValue(notes);
+        }
     }
 }
