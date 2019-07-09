@@ -15,6 +15,10 @@ import androidx.fragment.app.FragmentTransaction;
 public class NotesActivity extends AppCompatActivity implements NoteItemOnClickListenerProvider, FragmentManager.OnBackStackChangedListener {
 
     private static final String LOG_TAG = "[LOG_TAG:NotesActivity]";
+    private final String LIST_FRAG_TAG = "list";
+    private final String VIEW_FRAG_TAG = "view";
+    private final String ADD_FRAG_TAG = "add";
+    private final String EDIT_FRAG_TAG = "edit";
 
     @Nullable
     private NoteItemOnClickListener listener;
@@ -26,7 +30,7 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
         Log.d(LOG_TAG, " onCreate");
         if (savedInstanceState == null) {
             NotesListFragment noteListFragment = NotesListFragment.newInstance();
-            replaceFragment(noteListFragment, false, "list");
+            replaceFragment(noteListFragment, false, LIST_FRAG_TAG);
         }
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         shouldShowBackButton();
@@ -48,19 +52,19 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
             @Override
             public void onClickNoteItem(int noteId) {
                 ShowNoteFragment showNoteFragment = ShowNoteFragment.newInstance(noteId);
-                replaceFragment(showNoteFragment, true, "view");
+                replaceFragment(showNoteFragment, true, VIEW_FRAG_TAG);
             }
 
             @Override
             public void onAddingNote() {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance();
-                replaceFragment(addOrEditFragment, true, "add");
+                replaceFragment(addOrEditFragment, true, ADD_FRAG_TAG);
             }
 
             @Override
             public void onEditingNote(int noteId) {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance(noteId);
-                replaceFragment(addOrEditFragment, true, "edit");
+                replaceFragment(addOrEditFragment, true, EDIT_FRAG_TAG);
             }
 
             @Override
