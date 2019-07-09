@@ -12,8 +12,8 @@ import ru.yandex.sharov.example.notes.data.Note;
 
 public class UIUtil {
 
-    public static final Comparator<Note> ASC_NOTE_COMPARATOR = (Note n1, Note n2) -> Long.compare(n1.getDateLong(), n2.getDateLong()) * -1;
-    public static final Comparator<Note> DESC_NOTE_COMPARATOR = (Note n1, Note n2) -> Long.compare(n1.getDateLong(), n2.getDateLong());
+    public static final Comparator<Note> ASC_NOTE_COMPARATOR = (Note n1, Note n2) -> Long.compare(n1.getDate(), n2.getDate()) * -1;
+    public static final Comparator<Note> DESC_NOTE_COMPARATOR = (Note n1, Note n2) -> Long.compare(n1.getDate(), n2.getDate());
 
     public static void assertContextImplementsInterface(@NonNull Context context, @NonNull Class interfaceClass) {
         if (!(interfaceClass.isAssignableFrom(context.getClass()))) {

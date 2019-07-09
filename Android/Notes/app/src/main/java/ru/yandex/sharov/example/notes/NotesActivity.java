@@ -46,7 +46,7 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
         Context context = this;
         return new NoteItemOnClickListener() {
             @Override
-            public void onClickNoteItem(int noteId) {
+            public void onClickNoteItem(@NonNull Long noteId) {
                 ShowNoteFragment showNoteFragment = ShowNoteFragment.newInstance(noteId);
                 replaceFragment(showNoteFragment, true, "view");
             }
@@ -58,7 +58,7 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
             }
 
             @Override
-            public void onEditingNote(int noteId) {
+            public void onEditingNote(@NonNull Long  noteId) {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance(noteId);
                 replaceFragment(addOrEditFragment, true, "edit");
             }

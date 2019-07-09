@@ -6,16 +6,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import ru.yandex.sharov.example.notes.data.DBHelperStub;
+import ru.yandex.sharov.example.notes.data.NoteInteractor;
 import ru.yandex.sharov.example.notes.data.Note;
 
 public class NoteViewModel extends ViewModel {
     @NonNull
     private final MutableLiveData<Note> note = new MutableLiveData<>();
     @NonNull
-    private DBHelperStub dbHelper;
+    private NoteInteractor dbHelper;
 
-    public NoteViewModel(@NonNull DBHelperStub dbHelper) {
+    public NoteViewModel(@NonNull NoteInteractor dbHelper) {
         this.dbHelper = dbHelper;
     }
 
@@ -37,17 +37,12 @@ public class NoteViewModel extends ViewModel {
         dbHelper.removeNote(note.getValue().getId());
     }
 
-    public void getNoteById(@Nullable Integer noteId) {
+    public void getNoteById(@Nullable Long noteId) {
         if (noteId == null) {
             this.note.setValue(new Note());
             return;
         }
-        Note note = dbHelper.getNoteById(noteId);
-        if (note != null) {
-            this.note.setValue(note);
-        } else {
-            this.note.setValue(new Note());
-        }
+        dbHelper.getNoteById(noteId, this.note);
     }
 
     public void saveState(String text, String title) {

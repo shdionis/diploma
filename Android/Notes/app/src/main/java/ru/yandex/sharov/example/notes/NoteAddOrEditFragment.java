@@ -37,9 +37,9 @@ public class NoteAddOrEditFragment extends Fragment {
     private boolean isNewNote = false;
 
     @NonNull
-    public static NoteAddOrEditFragment newInstance(int noteId) {
+    public static NoteAddOrEditFragment newInstance(@NonNull Long noteId) {
         Bundle args = new Bundle();
-        args.putInt(NOTE_ID_ARG, noteId);
+        args.putLong(NOTE_ID_ARG, noteId.longValue());
         NoteAddOrEditFragment fragment = new NoteAddOrEditFragment();
         fragment.setArguments(args);
         return fragment;
@@ -56,7 +56,7 @@ public class NoteAddOrEditFragment extends Fragment {
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory();
+        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext());
         noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
     }
 
@@ -68,7 +68,7 @@ public class NoteAddOrEditFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             Log.d(LOG_TAG, " onCreate-fromArgs");
-            noteViewModel.getNoteById(args.getInt(NOTE_ID_ARG));
+            noteViewModel.getNoteById(args.getLong(NOTE_ID_ARG));
         } else {
             noteViewModel.getNoteById(null);
             isNewNote = true;
@@ -84,7 +84,7 @@ public class NoteAddOrEditFragment extends Fragment {
         noteTitle = rootV.findViewById(R.id.note_edit_title);
         TextView noteDate = rootV.findViewById(R.id.note_date);
         noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            noteDate.setText(note.getDate());
+            noteDate.setText(note.getLongFormatDate());
             noteTitle.setText(note.getTitle());
             noteText.setText(note.getText());
         });

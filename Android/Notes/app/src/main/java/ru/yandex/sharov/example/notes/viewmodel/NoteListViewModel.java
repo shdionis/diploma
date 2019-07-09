@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ru.yandex.sharov.example.notes.data.DBHelperStub;
+import ru.yandex.sharov.example.notes.data.NoteInteractor;
 import ru.yandex.sharov.example.notes.data.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
@@ -29,7 +29,7 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private String filterQuery;
 
-    public NoteListViewModel(@NonNull DBHelperStub dbHelper) {
+    public NoteListViewModel(@NonNull NoteInteractor dbHelper) {
         comparator = UIUtil.ASC_NOTE_COMPARATOR;
         filterQuery = "";
         fullDataObserver = new FullDataObserver();
