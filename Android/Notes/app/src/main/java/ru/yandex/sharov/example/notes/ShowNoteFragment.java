@@ -31,9 +31,9 @@ public class ShowNoteFragment extends Fragment {
     private NoteViewModel noteViewModel;
 
     @NonNull
-    public static ShowNoteFragment newInstance(@NonNull Integer noteId) {
+    public static ShowNoteFragment newInstance(@NonNull Long noteId) {
         Bundle args = new Bundle();
-        args.putInt(NOTE_ARG, noteId);
+        args.putLong(NOTE_ARG, noteId.longValue());
         ShowNoteFragment fragment = new ShowNoteFragment();
         fragment.setArguments(args);
         return fragment;
@@ -45,7 +45,7 @@ public class ShowNoteFragment extends Fragment {
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory();
+        NoteListViewModelFactory factory = new NoteListViewModelFactory(this.requireContext());
         noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
     }
 
@@ -56,7 +56,7 @@ public class ShowNoteFragment extends Fragment {
         Log.d(LOG_TAG, " onCreate");
         Bundle args = getArguments();
         if (args != null) {
-            noteViewModel.getNoteById(args.getInt(NOTE_ARG));
+            noteViewModel.getNoteById(args.getLong(NOTE_ARG));
         }
 
     }
@@ -71,7 +71,7 @@ public class ShowNoteFragment extends Fragment {
         TextView tvTextNote = rootV.findViewById(R.id.note_text);
         noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
             Log.d(LOG_TAG, "ObserverCallback");
-            tvDateNote.setText(note.getDate());
+            tvDateNote.setText(note.getLongFormatDate());
             tvTitleNote.setText(note.getTitle());
             tvTextNote.setText(note.getText());
         });

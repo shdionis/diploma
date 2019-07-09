@@ -77,13 +77,13 @@ public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
         }
 
         public void bindNote(@NonNull Note n) {
-            tvDate.setText(n.getShortDate());
+            tvDate.setText(n.getShortFormatDate());
             tvTitle.setText(n.getTitle());
             tvText.setText(n.getText());
             noteListItemView.setOnClickListener(v -> onNoteitemClicked(n.getId()));
         }
 
-        private void onNoteitemClicked(int noteId) {
+        private void onNoteitemClicked(@NonNull Long noteId) {
             if (noteItemOnClickListener != null) {
                 noteItemOnClickListener.onClickNoteItem(noteId);
             }

@@ -2,15 +2,17 @@ package ru.yandex.sharov.example.notes.data;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
+@Entity
 public class Note {
-    private static AtomicInteger count = new AtomicInteger();
 
-    private int id;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
     private long date;
     @NonNull
     private String title = "";
@@ -18,19 +20,24 @@ public class Note {
     private String text;
 
     public Note() {
-        id = count.decrementAndGet();
         date = System.currentTimeMillis();
     }
 
-    public Note(@NonNull String title, long date, @Nullable String text) {
+    @Ignore
+    public Note(@NonNull Long id, @NonNull String title, long date, @Nullable String text) {
         this();
+        this.id = id;
         this.title = title;
         this.date = date;
         this.text = text;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @NonNull
@@ -42,22 +49,22 @@ public class Note {
         this.title = title;
     }
 
-    public long getDateLong() {
+    public long getDate() {
         return date;
-    }
-
-    @NonNull
-    public String getDate() {
-        return FormatUtil.getDateFormated(date);
-    }
-
-    @NonNull
-    public String getShortDate() {
-        return FormatUtil.getShortDateFormated(date);
     }
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    @NonNull
+    public String getShortFormatDate() {
+        return FormatUtil.getShortDateFormated(date);
+    }
+
+    @NonNull
+    public String getLongFormatDate() {
+        return FormatUtil.getDateFormated(date);
     }
 
     @Nullable
@@ -75,7 +82,7 @@ public class Note {
         return "Note{" +
                 "id='" + id + '\'' +
                 "title='" + title + '\'' +
-                ", date=" + getShortDate() +
+                ", date=" + getShortFormatDate() +
                 ", text='" + text + '\'' +
                 '}';
     }
