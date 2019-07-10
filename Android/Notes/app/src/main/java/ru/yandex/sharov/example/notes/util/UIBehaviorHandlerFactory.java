@@ -1,6 +1,5 @@
 package ru.yandex.sharov.example.notes.util;
 
-import android.animation.Animator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;

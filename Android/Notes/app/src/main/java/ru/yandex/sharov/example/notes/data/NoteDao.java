@@ -18,7 +18,7 @@ public interface NoteDao {
     Note getNotesById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertNotes(Iterable<Note> note);
+    void insertOrUpdateNotes(Note ... note);
 
     @Query("DELETE FROM note WHERE id IN(:ids)")
     void deleteNotes(Long[] ids);

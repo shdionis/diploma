@@ -7,10 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.room.Room;
 
-import java.util.Collections;
 import java.util.List;
 
 public class NoteInteractor {
@@ -19,11 +16,13 @@ public class NoteInteractor {
     private static NoteInteractor instance;
     @NonNull
     private final LiveData<List<Note>> data;
+    @NonNull
     private final DatabaseInteractionsFactory interactionsFactory;
+    @NonNull
     private final NotesDatabase notesDB;
 
     @NonNull
-    public static NoteInteractor getInstance(Context context) {
+    public static NoteInteractor getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) {
@@ -34,15 +33,10 @@ public class NoteInteractor {
         } else return instance;
     }
 
-    private NoteInteractor(Context context) {
-        notesDB = Room.databaseBuilder(context, NotesDatabase.class, "notesDB").build();
+    private NoteInteractor(@NonNull Context context) {
+        notesDB = NotesDatabase.getInstance(context);
         interactionsFactory = DatabaseInteractionsFactory.newInstance(notesDB.getNoteDao());
         data = notesDB.getNoteDao().getAllNotes();
-
-        init();
-    }
-
-    private void init() {
     }
 
     @NonNull
@@ -60,7 +54,7 @@ public class NoteInteractor {
     }
 
     @Nullable
-    public LiveData<Note> getNoteById(long noteId, MutableLiveData<Note> noteData) {
+    public LiveData<Note> getNoteById(long noteId, @NonNull MutableLiveData<Note> noteData) {
         AsyncTask<Void, Void, Note> getNoteTask = interactionsFactory.createSelectOneNoteTask(noteId, noteData);
         getNoteTask.execute();
         return noteData;

@@ -33,7 +33,7 @@ public class ShowNoteFragment extends Fragment {
     @NonNull
     public static ShowNoteFragment newInstance(@NonNull Long noteId) {
         Bundle args = new Bundle();
-        args.putLong(NOTE_ARG, noteId.longValue());
+        args.putLong(NOTE_ARG, noteId);
         ShowNoteFragment fragment = new ShowNoteFragment();
         fragment.setArguments(args);
         return fragment;

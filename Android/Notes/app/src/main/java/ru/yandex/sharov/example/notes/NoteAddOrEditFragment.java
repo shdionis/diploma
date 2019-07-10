@@ -39,7 +39,7 @@ public class NoteAddOrEditFragment extends Fragment {
     @NonNull
     public static NoteAddOrEditFragment newInstance(@NonNull Long noteId) {
         Bundle args = new Bundle();
-        args.putLong(NOTE_ID_ARG, noteId.longValue());
+        args.putLong(NOTE_ID_ARG, noteId);
         NoteAddOrEditFragment fragment = new NoteAddOrEditFragment();
         fragment.setArguments(args);
         return fragment;
@@ -85,8 +85,10 @@ public class NoteAddOrEditFragment extends Fragment {
         TextView noteDate = rootV.findViewById(R.id.note_date);
         noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
             noteDate.setText(note.getLongFormatDate());
-            noteTitle.setText(note.getTitle());
-            noteText.setText(note.getText());
+            if(savedInstanceState == null) {
+                noteTitle.setText(note.getTitle());
+                noteText.setText(note.getText());
+            }
         });
         return rootV;
     }
