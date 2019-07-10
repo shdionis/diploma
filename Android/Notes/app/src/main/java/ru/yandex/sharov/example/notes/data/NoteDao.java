@@ -1,5 +1,7 @@
 package ru.yandex.sharov.example.notes.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -12,14 +14,16 @@ import java.util.List;
 public interface NoteDao {
 
     @Query("SELECT * FROM note")
+    @NonNull
     LiveData<List<Note>> getAllNotes();
 
-    @Query("SELECT * FROM note where id = :id")
+    @Query("SELECT * FROM note WHERE id = :id")
+    @Nullable
     Note getNotesById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertOrUpdateNotes(Note ... note);
+    void insertOrUpdateNotes(@NonNull Note ... note);
 
     @Query("DELETE FROM note WHERE id IN(:ids)")
-    void deleteNotes(Long[] ids);
+    void deleteNotes(@NonNull Long[] ids);
 }

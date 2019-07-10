@@ -56,7 +56,7 @@ public class NoteAddOrEditFragment extends Fragment {
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext());
+        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext().getApplicationContext());
         noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
     }
 
@@ -85,10 +85,8 @@ public class NoteAddOrEditFragment extends Fragment {
         TextView noteDate = rootV.findViewById(R.id.note_date);
         noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
             noteDate.setText(note.getLongFormatDate());
-            if(savedInstanceState == null) {
-                noteTitle.setText(note.getTitle());
-                noteText.setText(note.getText());
-            }
+            noteTitle.setText(note.getTitle());
+            noteText.setText(note.getText());
         });
         return rootV;
     }

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -12,32 +13,46 @@ import java.util.List;
 
 public class NoteInteractor {
 
-    private static final Object lock = new Object();
+    private static final Object LOCK = new Object();
+    @Nullable
     private static NoteInteractor instance;
     @NonNull
-    private final LiveData<List<Note>> data;
+    private final MutableLiveData<List<Note>> data;
     @NonNull
-    private final DatabaseInteractionsFactory interactionsFactory;
+    private LiveData<List<Note>> dbData;
     @NonNull
-    private final NotesDatabase notesDB;
+    private DatabaseInteractionsFactory interactionsFactory;
+
+    private NoteInteractor(@NonNull Context context) {
+        data = new MutableLiveData<>();
+        initDataLayer(context);
+    }
+
+    private void initDataLayer(@NonNull Context context) {
+        Consumer<NotesDatabase> consumer = notesDatabase -> {
+            interactionsFactory = DatabaseInteractionsFactory.newInstance(notesDatabase.getNoteDao());
+            dbData = notesDatabase.getNoteDao().getAllNotes();
+            dbData.observeForever(notes -> data.setValue(notes));
+
+        };
+
+        InitDastabase initDastabase = new InitDastabase(context, consumer);
+        initDastabase.execute();
+    }
 
     @NonNull
     public static NoteInteractor getInstance(@NonNull Context context) {
         if (instance == null) {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 if (instance == null) {
                     instance = new NoteInteractor(context);
                 }
                 return instance;
             }
-        } else return instance;
+        }
+        return instance;
     }
 
-    private NoteInteractor(@NonNull Context context) {
-        notesDB = NotesDatabase.getInstance(context);
-        interactionsFactory = DatabaseInteractionsFactory.newInstance(notesDB.getNoteDao());
-        data = notesDB.getNoteDao().getAllNotes();
-    }
 
     @NonNull
     public LiveData<List<Note>> getData() {
@@ -58,5 +73,27 @@ public class NoteInteractor {
         AsyncTask<Void, Void, Note> getNoteTask = interactionsFactory.createSelectOneNoteTask(noteId, noteData);
         getNoteTask.execute();
         return noteData;
+    }
+
+    private static class InitDastabase extends AsyncTask<Void, Void, NotesDatabase> {
+
+        @NonNull
+        private final Context context;
+        private final Consumer<NotesDatabase> dbConsumer;
+
+        private InitDastabase(@NonNull Context context, Consumer<NotesDatabase> dbConsumer) {
+            this.context = context;
+            this.dbConsumer = dbConsumer;
+        }
+
+        @Override
+        protected NotesDatabase doInBackground(Void... voids) {
+            return NotesDatabase.getInstance(context);
+        }
+
+        @Override
+        protected void onPostExecute(NotesDatabase notesDB) {
+            dbConsumer.accept(notesDB);
+        }
     }
 }

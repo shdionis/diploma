@@ -45,7 +45,7 @@ public class ShowNoteFragment extends Fragment {
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory(this.requireContext());
+        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext().getApplicationContext());
         noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
     }
 

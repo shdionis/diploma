@@ -29,11 +29,11 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private String filterQuery;
 
-    public NoteListViewModel(@NonNull NoteInteractor dbHelper) {
+    public NoteListViewModel(@NonNull NoteInteractor dbInteractor) {
         comparator = UIUtil.ASC_NOTE_COMPARATOR;
         filterQuery = "";
         fullDataObserver = new FullDataObserver();
-        fullData = dbHelper.getData();
+        fullData = dbInteractor.getData();
         fullData.observeForever(fullDataObserver);
     }
 

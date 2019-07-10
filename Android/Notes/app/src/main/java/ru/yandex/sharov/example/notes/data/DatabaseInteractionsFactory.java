@@ -3,6 +3,7 @@ package ru.yandex.sharov.example.notes.data;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 public class DatabaseInteractionsFactory {
@@ -10,13 +11,13 @@ public class DatabaseInteractionsFactory {
     @NonNull
     private final NoteDao notesDao;
 
+    private DatabaseInteractionsFactory(@NonNull NoteDao notesDB) {
+        this.notesDao = notesDB;
+    }
+
     @NonNull
     public static DatabaseInteractionsFactory newInstance(@NonNull NoteDao notesDao) {
         return new DatabaseInteractionsFactory(notesDao);
-    }
-
-    private DatabaseInteractionsFactory(@NonNull NoteDao notesDB) {
-        this.notesDao = notesDB;
     }
 
     @NonNull
@@ -44,21 +45,24 @@ public class DatabaseInteractionsFactory {
 
     private class SelectOneNoteAsyncTask extends AsyncTask<Void, Void, Note> {
 
-        private Long id;
-        private MutableLiveData liveDataConsumer;
+        @NonNull
+        private final Long id;
+        @NonNull
+        private final MutableLiveData liveDataConsumer;
 
         public SelectOneNoteAsyncTask(@NonNull Long id, @NonNull MutableLiveData liveDataConsumer) {
             this.id = id;
             this.liveDataConsumer = liveDataConsumer;
         }
 
+        @Nullable
         @Override
         protected Note doInBackground(Void... voids) {
             return notesDao.getNotesById(id);
         }
 
         @Override
-        protected void onPostExecute(Note note) {
+        protected void onPostExecute(@Nullable Note note) {
             if (note == null) {
                 liveDataConsumer.setValue(new Note());
             } else {

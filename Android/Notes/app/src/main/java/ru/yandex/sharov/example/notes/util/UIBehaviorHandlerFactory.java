@@ -17,21 +17,21 @@ public class UIBehaviorHandlerFactory {
         return new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int newState) {
-                final int DURATION = 300;
-                final float SCALE_HIDE = 0;
-                final float SCALE_SHOW = 1;
+                final int duration = 300;
+                final float scaleHide = 0;
+                final float scaleShow = 1;
                 if (BottomSheetBehavior.STATE_DRAGGING == newState || BottomSheetBehavior.STATE_EXPANDED == newState) {
-                    fab.animate().scaleX(SCALE_HIDE).scaleY(SCALE_HIDE).setDuration(DURATION).start();
+                    fab.animate().scaleX(scaleHide).scaleY(scaleHide).setDuration(duration).start();
                 } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
-                    fab.animate().scaleX(SCALE_SHOW).scaleY(SCALE_SHOW).setDuration(DURATION).start();
+                    fab.animate().scaleX(scaleShow).scaleY(scaleShow).setDuration(duration).start();
                 }
             }
 
             @Override
             public void onSlide(@NonNull View view, float v) {
-                final int DURATION = 0;
-                final float ROTATE_ANGLE = 180;
-                closeOpenBtn.animate().rotation(ROTATE_ANGLE * v).setDuration(DURATION).start();
+                final int duration = 0;
+                final float rotateAngle = 180;
+                closeOpenBtn.animate().rotation(rotateAngle * v).setDuration(duration).start();
             }
         };
     }
@@ -78,9 +78,9 @@ public class UIBehaviorHandlerFactory {
     @NonNull
     public static CompoundButton.OnCheckedChangeListener createOnCheckedChangeListener(@NonNull NoteListDataProvider noteListDataProvider) {
         return (compoundButton, isChecked) -> {
-            final float ROTATE_ANGLE = 180;
+            final float rotateAngle = 180;
             compoundButton.setRotationX(isChecked ? 180 : 0);
-            compoundButton.animate().rotationXBy(ROTATE_ANGLE).start();
+            compoundButton.animate().rotationXBy(rotateAngle).start();
             noteListDataProvider.resortData(isChecked);
             noteListDataProvider.refreshData();
 

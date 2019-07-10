@@ -53,7 +53,8 @@ public class NotesListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
         View rootV = inflater.inflate(R.layout.notes_list_fragment, container, false);
-        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(requireContext())).get(NoteListViewModel.class);
+        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(
+                requireContext().getApplicationContext())).get(NoteListViewModel.class);
         FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> listener.onAddingNote());
         noteListViewModel.isShowProgressBar().observe(this, progressShowFlag -> {
