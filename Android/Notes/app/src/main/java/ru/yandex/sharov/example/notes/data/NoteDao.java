@@ -13,17 +13,17 @@ import java.util.List;
 @Dao
 public interface NoteDao {
 
-    @Query("SELECT * FROM note")
+    @Query("SELECT * FROM notes")
     @NonNull
     LiveData<List<Note>> getAllNotes();
 
-    @Query("SELECT * FROM note WHERE id = :id")
+    @Query("SELECT * FROM notes WHERE id = :id")
     @Nullable
     Note getNotesById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOrUpdateNotes(@NonNull Note ... note);
 
-    @Query("DELETE FROM note WHERE id IN(:ids)")
+    @Query("DELETE FROM notes WHERE id IN(:ids)")
     void deleteNotes(@NonNull Long[] ids);
 }

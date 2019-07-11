@@ -12,19 +12,23 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.util.UUID;
+
 @Database(entities = {Note.class}, version = 1)
 public abstract class NotesDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = "[LOG_TAG:NotesDB]";
     private static final Object LOCK = new Object();
     private static final String DB_NAME = "notes_DB";
+    private static final String TABLE_NAME = "notes";
 
     @NonNull
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
 
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            final String noteV2TableCreate = "CREATE TABLE note (" +
+            //final String noteTmpName = "noteV2_tmp";
+            final String noteV2TableCreateTemplate = "CREATE TABLE %s (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guid TEXT UNIQUE NOT NULL," +
                     "version INTEGER," +
@@ -34,13 +38,51 @@ public abstract class NotesDatabase extends RoomDatabase {
                     "content TEXT," +
                     "deleted INTEGER" +
                     "); ";
+            //final String noteV2TableCreate = String.format(noteV2TableCreateTemplate, noteTmpName);
+            final String noteV2TableCreate = String.format(noteV2TableCreateTemplate, TABLE_NAME);
             database.beginTransaction();
-            Cursor oldData = database.query("note");
-            database.execSQL("ALTER TABLE note " +
-                    "RENAME TO note_old;");
+            database.execSQL("ALTER TABLE " + TABLE_NAME +
+                    " RENAME TO note_old;");
             database.execSQL(noteV2TableCreate);
-            database.execSQL("DROP TABLE note_old");
+            database.execSQL(noteV2TableCreate);
+            final String[] columnsV1 = new String[]{"id", "date", "title", "text"};
+            final String[] columnsV2 = new String[]{"id", "guid", "date", "title", "content", "deleted"};
+            Cursor oldData = database.query("note_old");
+            if (oldData.moveToFirst()) {
+                StringBuilder valuesToInsert = new StringBuilder();
+                do {
+                    valuesToInsert.append("(")
+                            .append("\"").append(oldData.getLong(oldData.getColumnIndex(columnsV1[0]))).append("\",")
+                            .append("\"").append(UUID.randomUUID().toString()).append("\",")
+                            .append("\"").append(oldData.getLong(oldData.getColumnIndex(columnsV1[1]))).append("\",")
+                            .append("\"").append(oldData.getLong(oldData.getColumnIndex(columnsV1[2]))).append("\",")
+                            .append("\"").append(oldData.getLong(oldData.getColumnIndex(columnsV1[3]))).append("\",")
+                            .append("\"" + 0 + "\"")
+                            .append(")");
+                    if (oldData.isLast()) {
+                        valuesToInsert.append(",");
+                    }
+                } while (oldData.moveToNext());
 
+                StringBuilder insertQuery = new StringBuilder();
+                insertQuery.append("INSERT INTO ")
+                        .append(TABLE_NAME)
+                        .append(" (")
+                        .append(columnsV2[0]).append(",")
+                        .append(columnsV2[1]).append(",")
+                        .append(columnsV2[2]).append(",")
+                        .append(columnsV2[3]).append(",")
+                        .append(columnsV2[4]).append(",")
+                        .append(columnsV2[5]).append(",")
+                        .append(" VALUES ")
+                        .append(valuesToInsert.toString()).append(";");
+                try {
+                    database.execSQL(insertQuery.toString());
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                }
+            }
+            database.execSQL("DROP TABLE note_old");
             database.setTransactionSuccessful();
             database.endTransaction();
         }
@@ -62,10 +104,10 @@ public abstract class NotesDatabase extends RoomDatabase {
                     textNote.append("Note").append(i).append(j);
                 }
                 valuesToInsert.append("(")
-                        .append("\"" + (long) i + "\",")
-                        .append("\"Note" + i + "\",")
-                        .append("\"" + (System.currentTimeMillis() - i * (long) timeStep) + "\",")
-                        .append("\"" + textNote.toString() + "\"")
+                        .append("\"").append((long) i).append("\",")
+                        .append("\"Note").append(i).append("\",")
+                        .append("\"").append((System.currentTimeMillis() - i * (long) timeStep)).append("\",")
+                        .append("\"").append(textNote.toString()).append("\"")
                         .append(")");
                 if (i <= iterations - 1) {
                     valuesToInsert.append(",");
@@ -73,14 +115,14 @@ public abstract class NotesDatabase extends RoomDatabase {
             }
             StringBuilder insertQuery = new StringBuilder();
             insertQuery.append("INSERT INTO ")
-                    .append("note")
+                    .append(TABLE_NAME)
                     .append(" (")
-                    .append(columns[0] + ",")
-                    .append(columns[1] + ",")
-                    .append(columns[2] + ",")
-                    .append(columns[3] + ")")
+                    .append(columns[0]).append(",")
+                    .append(columns[1]).append(",")
+                    .append(columns[2]).append(",")
+                    .append(columns[3]).append(")")
                     .append(" VALUES ")
-                    .append(valuesToInsert.toString() + ";");
+                    .append(valuesToInsert.toString()).append(";");
             try {
                 db.execSQL(insertQuery.toString());
             } catch (Exception e) {

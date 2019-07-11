@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
-@Entity
+@Entity(tableName = "notes")
 public class Note {
 
     @PrimaryKey(autoGenerate = true)
