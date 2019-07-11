@@ -86,7 +86,7 @@ public class NoteAddOrEditFragment extends Fragment {
         noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
             noteDate.setText(note.getLongFormatDate());
             noteTitle.setText(note.getTitle());
-            noteText.setText(note.getText());
+            noteText.setText(note.getContent());
         });
         return rootV;
     }
@@ -124,7 +124,7 @@ public class NoteAddOrEditFragment extends Fragment {
         if (note != null) {
             note.setDate(System.currentTimeMillis());
             note.setTitle(noteTitle.getText().toString());
-            note.setText(noteText.getText().toString());
+            note.setContent(noteText.getText().toString());
             noteViewModel.addOrUpdateNote();
         }
         listener.onAfterChangeNote();

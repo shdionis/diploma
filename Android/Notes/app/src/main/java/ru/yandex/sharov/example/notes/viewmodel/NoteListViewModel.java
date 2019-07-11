@@ -58,7 +58,7 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
         List<Note> filteredData = new ArrayList<>();
         for (Note note : notes) {
             if (note.getTitle().toLowerCase().contains(filterQuery) ||
-                    (note.getText() != null && note.getText().toLowerCase().contains(filterQuery))) {
+                    (note.getContent() != null && note.getContent().toLowerCase().contains(filterQuery))) {
                 filteredData.add(note);
             }
         }

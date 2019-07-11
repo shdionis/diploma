@@ -51,7 +51,7 @@ public class NoteViewModel extends ViewModel {
         }
         Note n = note.getValue();
         n.setDate(System.currentTimeMillis());
-        n.setText(text);
+        n.setContent(text);
         n.setTitle(title);
         note.setValue(n);
     }
