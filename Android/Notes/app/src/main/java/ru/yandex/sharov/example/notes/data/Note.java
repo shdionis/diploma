@@ -11,33 +11,49 @@ import ru.yandex.sharov.example.notes.util.FormatUtil;
 @Entity(tableName = "notes")
 public class Note {
 
-    @PrimaryKey(autoGenerate = true)
-    private long id;
-    private long date;
     @NonNull
-    private String title = "";
+    @PrimaryKey(autoGenerate = true)
+    private Long id;
+    @NonNull
+    private String guid;
+    @NonNull
+    private String title;
     @Nullable
-    private String text;
+    private String content;
+    @NonNull
+    private Long date;
+    @NonNull
+    private Boolean deleted;
 
     public Note() {
         date = System.currentTimeMillis();
     }
 
     @Ignore
-    public Note(@NonNull Long id, @NonNull String title, long date, @Nullable String text) {
+    public Note(@NonNull Long id, @NonNull String title, @NonNull Long date, @Nullable String text) {
         this();
         this.id = id;
         this.title = title;
         this.date = date;
-        this.text = text;
+        this.content = text;
     }
 
-    public long getId() {
+    @NonNull
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(@NonNull Long id) {
         this.id = id;
+    }
+
+    @NonNull
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(@NonNull String guid) {
+        this.guid = guid;
     }
 
     @NonNull
@@ -49,11 +65,21 @@ public class Note {
         this.title = title;
     }
 
-    public long getDate() {
+    @Nullable
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(@Nullable String content) {
+        this.content = content;
+    }
+
+    @NonNull
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(@NonNull Long date) {
         this.date = date;
     }
 
@@ -67,23 +93,12 @@ public class Note {
         return FormatUtil.getDateFormated(date);
     }
 
-    @Nullable
-    public String getText() {
-        return text;
-    }
-
-    public void setText(@Nullable String text) {
-        this.text = text;
-    }
-
     @NonNull
-    @Override
-    public String toString() {
-        return "Note{" +
-                "id='" + id + '\'' +
-                "title='" + title + '\'' +
-                ", date=" + getShortFormatDate() +
-                ", text='" + text + '\'' +
-                '}';
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(@NonNull Boolean deleted) {
+        this.deleted = deleted;
     }
 }
