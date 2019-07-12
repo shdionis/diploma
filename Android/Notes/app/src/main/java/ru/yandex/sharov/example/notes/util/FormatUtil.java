@@ -3,7 +3,6 @@ package ru.yandex.sharov.example.notes.util;
 import androidx.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 public class FormatUtil {
     private static final SimpleDateFormat NOTE_DATE_FORMAT;

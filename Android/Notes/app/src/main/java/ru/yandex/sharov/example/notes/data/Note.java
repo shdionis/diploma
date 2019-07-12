@@ -2,35 +2,58 @@ package ru.yandex.sharov.example.notes.data;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
+@Entity(tableName = "notes")
 public class Note {
-    private static AtomicInteger count = new AtomicInteger();
 
-    private int id;
-    private long date;
     @NonNull
-    private String title = "";
+    @PrimaryKey(autoGenerate = true)
+    private Long id;
+    @NonNull
+    private String guid;
+    @NonNull
+    private String title;
     @Nullable
-    private String text;
+    private String content;
+    @NonNull
+    private Long date;
+    @NonNull
+    private Boolean deleted;
 
     public Note() {
-        id = count.decrementAndGet();
         date = System.currentTimeMillis();
     }
 
-    public Note(@NonNull String title, long date, @Nullable String text) {
+    @Ignore
+    public Note(@NonNull Long id, @NonNull String title, @NonNull Long date, @Nullable String text) {
         this();
+        this.id = id;
         this.title = title;
         this.date = date;
-        this.text = text;
+        this.content = text;
     }
 
-    public int getId() {
+    @NonNull
+    public Long getId() {
         return id;
+    }
+
+    public void setId(@NonNull Long id) {
+        this.id = id;
+    }
+
+    @NonNull
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(@NonNull String guid) {
+        this.guid = guid;
     }
 
     @NonNull
@@ -42,41 +65,40 @@ public class Note {
         this.title = title;
     }
 
-    public long getDateLong() {
-        return date;
+    @Nullable
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(@Nullable String content) {
+        this.content = content;
     }
 
     @NonNull
-    public String getDate() {
+    public Long getDate() {
+        return date;
+    }
+
+    public void setDate(@NonNull Long date) {
+        this.date = date;
+    }
+
+    @NonNull
+    public String getShortFormatDate() {
+        return FormatUtil.getShortDateFormated(date);
+    }
+
+    @NonNull
+    public String getLongFormatDate() {
         return FormatUtil.getDateFormated(date);
     }
 
     @NonNull
-    public String getShortDate() {
-        return FormatUtil.getShortDateFormated(date);
+    public Boolean getDeleted() {
+        return deleted;
     }
 
-    public void setDate(long date) {
-        this.date = date;
-    }
-
-    @Nullable
-    public String getText() {
-        return text;
-    }
-
-    public void setText(@Nullable String text) {
-        this.text = text;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "Note{" +
-                "id='" + id + '\'' +
-                "title='" + title + '\'' +
-                ", date=" + getShortDate() +
-                ", text='" + text + '\'' +
-                '}';
+    public void setDeleted(@NonNull Boolean deleted) {
+        this.deleted = deleted;
     }
 }
