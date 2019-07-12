@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.UUID;
+
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
 @Entity(tableName = "notes")
@@ -27,6 +29,9 @@ public class Note {
 
     public Note() {
         date = System.currentTimeMillis();
+        guid = UUID.randomUUID().toString();
+        title = "";
+        deleted = false;
     }
 
     @Ignore
