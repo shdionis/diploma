@@ -24,7 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import ru.yandex.sharov.example.notes.util.UIBehaviorHandlerFactory;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
-import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
+import ru.yandex.sharov.example.notes.viewmodel.factory.NoteListViewModelFactory;
 
 public class NotesListFragment extends Fragment {
 
@@ -84,6 +84,7 @@ public class NotesListFragment extends Fragment {
         dateSortBtn.setOnCheckedChangeListener(UIBehaviorHandlerFactory.createOnCheckedChangeListener(noteListViewModel));
         EditText searchEditText = rootV.findViewById(R.id.search_edit_text);
         searchEditText.addTextChangedListener(UIBehaviorHandlerFactory.createTextChangedListener(noteListViewModel));
+        searchEditText.setOnFocusChangeListener(UIBehaviorHandlerFactory.createOnFocusChangeListener(requireActivity()));
     }
 
     private void initNoteListRecyclerView(@NonNull View rootV) {

@@ -1,46 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:layout_editor_absoluteX="46dp"
-    tools:layout_editor_absoluteY="277dp">
+<layout>
 
-    <TextView
-        android:id="@+id/note_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/element_top_left_right_margin"
-        android:layout_marginLeft="@dimen/element_top_left_right_margin"
-        android:layout_marginTop="@dimen/element_top_left_right_margin"
-        android:textColor="@color/meta_text_list_color"
-        android:textSize="@dimen/note_date_list_text_margin"
-        style="@style/TextViewMeta"
-        tools:text="TextView" />
+    <data>
 
-    <EditText
-        android:id="@+id/note_edit_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/element_top_left_right_margin"
-        android:layout_marginLeft="@dimen/element_top_left_right_margin"
-        android:layout_marginTop="@dimen/element_top_left_right_margin"
-        android:gravity="bottom"
-        style="@style/TextViewPrimary"
-        android:hint="Заголовок"
-        android:textColor="@color/primary_text_list_color"
-        android:textSize="@dimen/note_title_list_text_margin"
-        tools:text="TextView" />
-    <EditText
-        android:id="@+id/note_edit_text"
+        <variable
+            name="model"
+            type="ru.yandex.sharov.example.notes.viewmodel.NoteViewModel" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/element_top_left_right_margin"
-        android:layout_marginLeft="@dimen/element_top_left_right_margin"
-        android:layout_marginTop="@dimen/element_top_left_right_margin"
-        android:gravity="left|top"
-        android:hint="Текст"
-        android:inputType="textMultiLine"
-        tools:text="Text" />
-</LinearLayout>
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="46dp"
+        tools:layout_editor_absoluteY="277dp">
+
+        <TextView
+            android:id="@+id/note_date"
+            style="@style/TextViewMeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/element_top_left_right_margin"
+            android:layout_marginLeft="@dimen/element_top_left_right_margin"
+            android:layout_marginTop="@dimen/element_top_left_right_margin"
+            android:text="@{model.noteBind.longFormatDate}"
+            android:textColor="@color/meta_text_list_color"
+            android:textSize="@dimen/note_date_list_text_margin"
+            tools:text="TextView" />
+
+        <EditText
+            android:id="@+id/note_edit_title"
+            style="@style/TextViewPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/element_top_left_right_margin"
+            android:layout_marginLeft="@dimen/element_top_left_right_margin"
+            android:layout_marginTop="@dimen/element_top_left_right_margin"
+            android:gravity="bottom"
+            android:hint="Заголовок"
+            android:text="@={model.noteBind.title}"
+            android:textColor="@color/primary_text_list_color"
+            android:textSize="@dimen/note_title_list_text_margin"
+            tools:text="TextView" />
+
+        <EditText
+            android:id="@+id/note_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/element_top_left_right_margin"
+            android:layout_marginTop="@dimen/element_top_left_right_margin"
+            android:layout_marginRight="@dimen/element_top_left_right_margin"
+            android:gravity="left|top"
+            android:hint="Текст"
+            android:inputType="textMultiLine"
+            android:text="@={model.noteBind.content}"
+            tools:text="Text" />
+    </LinearLayout>
+</layout>
