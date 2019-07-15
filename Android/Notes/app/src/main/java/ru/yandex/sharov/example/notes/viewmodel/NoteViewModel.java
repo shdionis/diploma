@@ -31,6 +31,7 @@ public class NoteViewModel extends ViewModel {
 
     public NoteViewModel(@NonNull LocalRepositoryNoteInteractor dbHelper) {
         this.dbHelper = dbHelper;
+        note.observeForever(bindingObserver);
     }
 
     @NonNull
