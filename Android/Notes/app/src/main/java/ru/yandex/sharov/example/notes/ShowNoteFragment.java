@@ -40,19 +40,21 @@ public class ShowNoteFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext().getApplicationContext());
-        noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
+        noteViewModel = ViewModelProviders.of(
+                this,
+                new NoteViewModelFactory(requireContext().getApplicationContext())
+        ).get(NoteViewModel.class);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, " onCreate");
         Bundle args = getArguments();
         if (args != null) {
@@ -65,16 +67,9 @@ public class ShowNoteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
-        View rootV = inflater.inflate(R.layout.note_view_fragment, container, false);
-        TextView tvDateNote = rootV.findViewById(R.id.note_date);
-        TextView tvTitleNote = rootV.findViewById(R.id.note_title);
-        TextView tvTextNote = rootV.findViewById(R.id.note_text);
-        noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            Log.d(LOG_TAG, "ObserverCallback");
-            tvDateNote.setText(note.getLongFormatDate());
-            tvTitleNote.setText(note.getTitle());
-            tvTextNote.setText(note.getContent());
-        });
+        NoteViewFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.note_view_fragment, container, false);
+        binding.setModel(noteViewModel);
+        View rootV = binding.getRoot();
         return rootV;
     }
 
@@ -92,7 +87,9 @@ public class ShowNoteFragment extends Fragment {
                         getResources().getString(R.string.action_delete), this, DELETE_REQUEST_CODE);
                 break;
             case R.id.action_edit:
-                listener.onEditingNote(noteViewModel.getNote().getValue().getId());
+                if (noteViewModel.getNote().getValue() != null) {
+                    listener.onEditingNote(noteViewModel.getNote().getValue().getId());
+                }
                 break;
             default:
                 break;

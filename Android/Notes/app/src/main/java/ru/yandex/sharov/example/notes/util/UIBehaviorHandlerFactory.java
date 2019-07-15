@@ -1,5 +1,6 @@
 package ru.yandex.sharov.example.notes.util;
 
+import android.app.Activity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -84,6 +85,14 @@ public class UIBehaviorHandlerFactory {
             noteListDataProvider.resortData(isChecked);
             noteListDataProvider.refreshData();
 
+        };
+    }
+
+    public static View.OnFocusChangeListener createOnFocusChangeListener(@NonNull Activity activity) {
+        return (view, onFocused) -> {
+            if(!onFocused) {
+                UIUtil.hideKeyTool(activity);
+            }
         };
     }
 }

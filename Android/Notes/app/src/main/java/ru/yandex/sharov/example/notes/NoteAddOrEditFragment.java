@@ -21,8 +21,9 @@ import androidx.lifecycle.ViewModelProviders;
 
 import ru.yandex.sharov.example.notes.model.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
-import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
+import ru.yandex.sharov.example.notes.viewmodel.factory.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
+import ru.yandex.sharov.example.notes.viewmodel.factory.NoteViewModelFactory;
 
 public class NoteAddOrEditFragment extends Fragment {
 
@@ -56,8 +57,10 @@ public class NoteAddOrEditFragment extends Fragment {
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext().getApplicationContext());
-        noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
+        noteViewModel = ViewModelProviders.of(
+                this,
+                new NoteViewModelFactory(requireContext().getApplicationContext())
+        ).get(NoteViewModel.class);
     }
 
     @Override
@@ -79,15 +82,11 @@ public class NoteAddOrEditFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
-        View rootV = inflater.inflate(R.layout.add_or_edit_note_fragment, container, false);
+        AddOrEditNoteFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.add_or_edit_note_fragment, container, false);
+        binding.setModel(noteViewModel);
+        View rootV = binding.getRoot();
         noteText = rootV.findViewById(R.id.note_edit_text);
         noteTitle = rootV.findViewById(R.id.note_edit_title);
-        TextView noteDate = rootV.findViewById(R.id.note_date);
-        noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            noteDate.setText(note.getLongFormatDate());
-            noteTitle.setText(note.getTitle());
-            noteText.setText(note.getContent());
-        });
         return rootV;
     }
 
@@ -120,13 +119,7 @@ public class NoteAddOrEditFragment extends Fragment {
     }
 
     private void saveNote() {
-        Note note = noteViewModel.getNote().getValue();
-        if (note != null) {
-            note.setDate(System.currentTimeMillis());
-            note.setTitle(noteTitle.getText().toString());
-            note.setContent(noteText.getText().toString());
-            noteViewModel.addOrUpdateNote();
-        }
+        noteViewModel.addOrUpdateNote();
         listener.onAfterChangeNote();
     }
 
@@ -142,11 +135,5 @@ public class NoteAddOrEditFragment extends Fragment {
                     break;
             }
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        noteViewModel.saveState(noteText.getText().toString(), noteTitle.getText().toString());
     }
 }

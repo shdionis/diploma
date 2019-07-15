@@ -29,8 +29,6 @@ public class Note {
 
     public Note() {
         date = System.currentTimeMillis();
-        guid = UUID.randomUUID().toString();
-        deleted = Boolean.FALSE;
     }
 
     @Ignore

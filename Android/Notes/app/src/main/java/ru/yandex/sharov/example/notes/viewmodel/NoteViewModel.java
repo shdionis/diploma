@@ -16,6 +16,20 @@ public class NoteViewModel extends ViewModel {
     private LocalRepositoryNoteInteractor dbHelper;
 
     public NoteViewModel(@NonNull LocalRepositoryNoteInteractor dbHelper) {
+    private NoteInteractor dbHelper;
+    @NonNull
+    private ObservableField<Note> noteBind = new ObservableField<>();
+    @Nullable
+    private Observer<Note> bindingObserver = new Observer<Note>() {
+        @Override
+        public void onChanged(Note n) {
+            if(n != null) {
+                noteBind.set(n);
+                note.removeObserver(bindingObserver);
+            }
+        }
+    };
+    public NoteViewModel(@NonNull NoteInteractor dbHelper) {
         this.dbHelper = dbHelper;
     }
 
@@ -25,8 +39,10 @@ public class NoteViewModel extends ViewModel {
     }
 
     public void addOrUpdateNote() {
-        if(note.getValue()!=null) {
-            dbHelper.addOrUpdateNote(note.getValue());
+        Note n = noteBind.get();
+        if(n!=null) {
+            n.setDate(System.currentTimeMillis());
+            dbHelper.addOrUpdateNote(n);
         }
     }
 
@@ -45,14 +61,8 @@ public class NoteViewModel extends ViewModel {
         dbHelper.getNoteById(noteId, this.note);
     }
 
-    public void saveState(String text, String title) {
-        if(note.getValue() == null) {
-            return;
-        }
-        Note n = note.getValue();
-        n.setDate(System.currentTimeMillis());
-        n.setContent(text);
-        n.setTitle(title);
-        note.setValue(n);
+    @Nullable
+    public ObservableField<Note> getNoteBind() {
+        return noteBind;
     }
 }
