@@ -11,16 +11,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import ru.yandex.sharov.example.notes.databinding.NoteViewFragmentBinding;
 import ru.yandex.sharov.example.notes.util.UIUtil;
-import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
+import ru.yandex.sharov.example.notes.viewmodel.factory.NoteViewModelFactory;
 
 public class ShowNoteFragment extends Fragment {
     private static final String LOG_TAG = "[LOG_TAG:ShowNote]";

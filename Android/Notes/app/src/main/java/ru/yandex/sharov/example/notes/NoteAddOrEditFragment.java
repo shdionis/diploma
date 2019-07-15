@@ -12,16 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import ru.yandex.sharov.example.notes.model.Note;
+import ru.yandex.sharov.example.notes.databinding.AddOrEditNoteFragmentBinding;
 import ru.yandex.sharov.example.notes.util.UIUtil;
-import ru.yandex.sharov.example.notes.viewmodel.factory.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
 import ru.yandex.sharov.example.notes.viewmodel.factory.NoteViewModelFactory;
 

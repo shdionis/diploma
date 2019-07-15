@@ -2,8 +2,10 @@ package ru.yandex.sharov.example.notes.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
@@ -14,9 +16,6 @@ public class NoteViewModel extends ViewModel {
     private final MutableLiveData<Note> note = new MutableLiveData<>();
     @NonNull
     private LocalRepositoryNoteInteractor dbHelper;
-
-    public NoteViewModel(@NonNull LocalRepositoryNoteInteractor dbHelper) {
-    private NoteInteractor dbHelper;
     @NonNull
     private ObservableField<Note> noteBind = new ObservableField<>();
     @Nullable
@@ -29,7 +28,8 @@ public class NoteViewModel extends ViewModel {
             }
         }
     };
-    public NoteViewModel(@NonNull NoteInteractor dbHelper) {
+
+    public NoteViewModel(@NonNull LocalRepositoryNoteInteractor dbHelper) {
         this.dbHelper = dbHelper;
     }
 

@@ -7,9 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import ru.yandex.sharov.example.notes.data.NoteInteractor;
-import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
 import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
+import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
 
 public class NoteListViewModelFactory implements ViewModelProvider.Factory {
 

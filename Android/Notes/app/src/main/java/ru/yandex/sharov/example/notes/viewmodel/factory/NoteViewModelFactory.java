@@ -7,17 +7,17 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import ru.yandex.sharov.example.notes.data.NoteInteractor;
+import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
 
 public class NoteViewModelFactory implements ViewModelProvider.Factory {
 
     private static final String LOG_TAG = "[LOG_TAG:NSVMFactory]";
     @NonNull
-    private final NoteInteractor dbInteractor;
+    private final LocalRepositoryNoteInteractor dbInteractor;
 
     public NoteViewModelFactory(@NonNull Context context) {
-        dbInteractor = NoteInteractor.getInstance(context);
+        dbInteractor = LocalRepositoryNoteInteractor.getInstance(context);
     }
 
     @NonNull
