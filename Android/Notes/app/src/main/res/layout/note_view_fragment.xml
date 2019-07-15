@@ -1,49 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/main_top_bottom_margin"
-    android:layout_marginBottom="@dimen/main_top_bottom_margin">
+<layout>
+    <data>
+        <variable
+            name="model"
+            type="ru.yandex.sharov.example.notes.viewmodel.NoteViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/main_top_bottom_margin"
+        android:layout_marginBottom="@dimen/main_top_bottom_margin">
 
 
-    <TextView
-        android:id="@+id/note_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/element_top_left_right_margin"
-        android:layout_marginLeft="@dimen/element_top_left_right_margin"
-        android:layout_marginTop="@dimen/element_top_left_right_margin"
-        android:textSize="@dimen/note_date_list_text_margin"
-        android:textColor="@color/meta_text_list_color"
-        tools:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/note_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/element_top_left_right_margin"
+            android:layout_marginLeft="@dimen/element_top_left_right_margin"
+            android:layout_marginTop="@dimen/element_top_left_right_margin"
+            android:textColor="@color/meta_text_list_color"
+            android:textSize="@dimen/note_date_list_text_margin"
+            android:text="@{model.noteBind.longFormatDate}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TextView" />
 
-    <TextView
-        android:id="@+id/note_title"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/primary_text_height"
-        android:layout_marginTop="@dimen/element_top_left_right_margin"
-        android:gravity="bottom"
-        android:textSize="@dimen/note_title_list_text_margin"
-        android:textColor="@color/primary_text_list_color"
-        tools:text="TextView"
-        app:layout_constraintStart_toStartOf="@id/note_date"
-        app:layout_constraintTop_toBottomOf="@+id/note_date" />
+        <TextView
+            android:id="@+id/note_title"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/primary_text_height"
+            android:layout_marginTop="@dimen/element_top_left_right_margin"
+            android:gravity="bottom"
+            android:textColor="@color/primary_text_list_color"
+            android:textSize="@dimen/note_title_list_text_margin"
+            android:text="@{model.noteBind.title}"
+            app:layout_constraintStart_toStartOf="@id/note_date"
+            app:layout_constraintTop_toBottomOf="@+id/note_date"
+            tools:text="TextView" />
 
-    <TextView
-        android:id="@+id/note_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/element_top_left_right_margin"
-        android:layout_marginTop="@dimen/element_top_left_right_margin"
-        android:layout_marginEnd="@dimen/element_top_left_right_margin"
-        android:textColor="@color/secondary_text_list_color"
-        android:textSize="@dimen/note_text_list_text_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/note_title"
-        tools:text="Text" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/note_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/element_top_left_right_margin"
+            android:layout_marginTop="@dimen/element_top_left_right_margin"
+            android:layout_marginEnd="@dimen/element_top_left_right_margin"
+            android:textColor="@color/secondary_text_list_color"
+            android:textSize="@dimen/note_text_list_text_margin"
+            android:text="@{model.noteBind.content}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/note_title"
+            tools:text="Text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

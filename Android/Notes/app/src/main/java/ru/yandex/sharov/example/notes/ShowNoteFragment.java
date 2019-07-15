@@ -11,16 +11,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import ru.yandex.sharov.example.notes.databinding.NoteViewFragmentBinding;
 import ru.yandex.sharov.example.notes.util.UIUtil;
-import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
+import ru.yandex.sharov.example.notes.viewmodel.factory.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
+import ru.yandex.sharov.example.notes.viewmodel.factory.NoteViewModelFactory;
 
 public class ShowNoteFragment extends Fragment {
     private static final String LOG_TAG = "[LOG_TAG:ShowNote]";
@@ -40,13 +42,15 @@ public class ShowNoteFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
-        NoteListViewModelFactory factory = new NoteListViewModelFactory(requireContext().getApplicationContext());
-        noteViewModel = ViewModelProviders.of(this, factory).get(NoteViewModel.class);
+        noteViewModel = ViewModelProviders.of(
+                this,
+                new NoteViewModelFactory(requireContext().getApplicationContext())
+        ).get(NoteViewModel.class);
     }
 
     @Override
@@ -58,23 +62,15 @@ public class ShowNoteFragment extends Fragment {
         if (args != null) {
             noteViewModel.getNoteById(args.getLong(NOTE_ARG));
         }
-
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
-        View rootV = inflater.inflate(R.layout.note_view_fragment, container, false);
-        TextView tvDateNote = rootV.findViewById(R.id.note_date);
-        TextView tvTitleNote = rootV.findViewById(R.id.note_title);
-        TextView tvTextNote = rootV.findViewById(R.id.note_text);
-        noteViewModel.getNote().observe(getViewLifecycleOwner(), note -> {
-            Log.d(LOG_TAG, "ObserverCallback");
-            tvDateNote.setText(note.getLongFormatDate());
-            tvTitleNote.setText(note.getTitle());
-            tvTextNote.setText(note.getText());
-        });
+        NoteViewFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.note_view_fragment, container, false);
+        binding.setModel(noteViewModel);
+        View rootV = binding.getRoot();
         return rootV;
     }
 
@@ -92,7 +88,9 @@ public class ShowNoteFragment extends Fragment {
                         getResources().getString(R.string.action_delete), this, DELETE_REQUEST_CODE);
                 break;
             case R.id.action_edit:
-                listener.onEditingNote(noteViewModel.getNote().getValue().getId());
+                if (noteViewModel.getNote().getValue() != null) {
+                    listener.onEditingNote(noteViewModel.getNote().getValue().getId());
+                }
                 break;
             default:
                 break;

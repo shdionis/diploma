@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.UUID;
 
-@Database(entities = {Note.class}, version = 2)
+@Database(entities = {Note.class}, version = 2, exportSchema = false)
 public abstract class NotesDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = "[LOG_TAG:NotesDB]";
