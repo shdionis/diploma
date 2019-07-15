@@ -1,10 +1,17 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.interact;
 
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 import androidx.lifecycle.MutableLiveData;
+
+import java.util.List;
+import java.util.Set;
+
+import ru.yandex.sharov.example.notes.data.NoteDao;
+import ru.yandex.sharov.example.notes.model.Note;
 
 public class DatabaseInteractionsFactory {
 

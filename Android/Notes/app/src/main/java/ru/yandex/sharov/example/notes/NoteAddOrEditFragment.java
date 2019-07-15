@@ -19,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import ru.yandex.sharov.example.notes.data.Note;
+import ru.yandex.sharov.example.notes.model.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;

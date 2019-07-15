@@ -6,15 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import ru.yandex.sharov.example.notes.data.NoteInteractor;
+import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
 
 public class NoteListViewModelFactory implements ViewModelProvider.Factory {
 
     @NonNull
-    private final NoteInteractor dbInteractor;
+    private final LocalRepositoryNoteInteractor dbInteractor;
 
     public NoteListViewModelFactory(@NonNull Context context) {
-        dbInteractor = NoteInteractor.getInstance(context);
+        dbInteractor = LocalRepositoryNoteInteractor.getInstance(context);
     }
 
     @NonNull

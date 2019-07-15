@@ -16,7 +16,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.UUID;
 
-@Database(entities = {Note.class}, version = 2)
+import ru.yandex.sharov.example.notes.model.Note;
+
+@Database(entities = {Note.class}, version = 2, exportSchema = false)
 public abstract class NotesDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = "[LOG_TAG:NotesDB]";
@@ -143,7 +145,7 @@ public abstract class NotesDatabase extends RoomDatabase {
             synchronized (LOCK) {
                 if (instance == null) {
                     instance = Room.databaseBuilder(context, NotesDatabase.class, DB_NAME)
-                            .addCallback(callback_v2)
+                            //.addCallback(callback_v2)
                             .addMigrations(MIGRATION_1_2)
                             .build();
                 }

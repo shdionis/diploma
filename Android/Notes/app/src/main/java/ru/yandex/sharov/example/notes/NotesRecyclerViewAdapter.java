@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Collections;
 import java.util.List;
 
-import ru.yandex.sharov.example.notes.data.Note;
+import ru.yandex.sharov.example.notes.model.Note;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
 

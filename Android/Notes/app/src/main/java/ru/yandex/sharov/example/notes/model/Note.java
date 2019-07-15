@@ -1,10 +1,12 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.model;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.util.UUID;
 
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
@@ -27,6 +29,8 @@ public class Note {
 
     public Note() {
         date = System.currentTimeMillis();
+        guid = UUID.randomUUID().toString();
+        deleted = Boolean.FALSE;
     }
 
     @Ignore
@@ -36,6 +40,15 @@ public class Note {
         this.title = title;
         this.date = date;
         this.content = text;
+    }
+
+    @Ignore
+    public Note(@NonNull RemoteNote rnote) {
+        this.guid = rnote.getGuid();
+        this.date = rnote.getDate();
+        this.title = rnote.getTitle();
+        this.content = rnote.getContent();
+        this.deleted  =rnote.getDeleted();
     }
 
     @NonNull

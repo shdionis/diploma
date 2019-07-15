@@ -51,8 +51,8 @@ public class ShowNoteFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         Log.d(LOG_TAG, " onCreate");
         Bundle args = getArguments();
         if (args != null) {
@@ -73,7 +73,7 @@ public class ShowNoteFragment extends Fragment {
             Log.d(LOG_TAG, "ObserverCallback");
             tvDateNote.setText(note.getLongFormatDate());
             tvTitleNote.setText(note.getTitle());
-            tvTextNote.setText(note.getText());
+            tvTextNote.setText(note.getContent());
         });
         return rootV;
     }

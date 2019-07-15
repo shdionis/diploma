@@ -6,16 +6,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import ru.yandex.sharov.example.notes.data.NoteInteractor;
-import ru.yandex.sharov.example.notes.data.Note;
+import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
+import ru.yandex.sharov.example.notes.model.Note;
 
 public class NoteViewModel extends ViewModel {
     @NonNull
     private final MutableLiveData<Note> note = new MutableLiveData<>();
     @NonNull
-    private NoteInteractor dbHelper;
+    private LocalRepositoryNoteInteractor dbHelper;
 
-    public NoteViewModel(@NonNull NoteInteractor dbHelper) {
+    public NoteViewModel(@NonNull LocalRepositoryNoteInteractor dbHelper) {
         this.dbHelper = dbHelper;
     }
 

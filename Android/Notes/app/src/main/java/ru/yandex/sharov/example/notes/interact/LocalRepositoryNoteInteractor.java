@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.interact;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -10,12 +10,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
+import java.util.Set;
 
-public class NoteInteractor {
+import ru.yandex.sharov.example.notes.model.Note;
+import ru.yandex.sharov.example.notes.data.NotesDatabase;
+
+public class LocalRepositoryNoteInteractor {
 
     private static final Object LOCK = new Object();
     @Nullable
-    private static NoteInteractor instance;
+    private static LocalRepositoryNoteInteractor instance;
     @NonNull
     private final MutableLiveData<List<Note>> data;
     @NonNull
@@ -23,7 +27,7 @@ public class NoteInteractor {
     @NonNull
     private DatabaseInteractionsFactory interactionsFactory;
 
-    private NoteInteractor(@NonNull Context context) {
+    private LocalRepositoryNoteInteractor(@NonNull Context context) {
         data = new MutableLiveData<>();
         initDataLayer(context);
     }
@@ -41,11 +45,11 @@ public class NoteInteractor {
     }
 
     @NonNull
-    public static NoteInteractor getInstance(@NonNull Context context) {
+    public static LocalRepositoryNoteInteractor getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized (LOCK) {
                 if (instance == null) {
-                    instance = new NoteInteractor(context);
+                    instance = new LocalRepositoryNoteInteractor(context);
                 }
                 return instance;
             }
@@ -61,6 +65,10 @@ public class NoteInteractor {
 
     public void addOrUpdateNote(@NonNull Note note) {
         interactionsFactory.createInsertNotesTask().execute(note);
+    }
+
+    public void addOrUpdateNote(@NonNull List<Note> notes) {
+        interactionsFactory.createInsertNotesTask().execute(notes.toArray(new Note[0]));
     }
 
     public void removeNote(long noteId) {

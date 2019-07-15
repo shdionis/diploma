@@ -10,6 +10,8 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import ru.yandex.sharov.example.notes.model.Note;
+
 @Dao
 public interface NoteDao {
 
@@ -22,7 +24,7 @@ public interface NoteDao {
     Note getNotesById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertOrUpdateNotes(@NonNull Note ... note);
+    void insertOrUpdateNotes(@NonNull Note... note);
 
     @Query("DELETE FROM notes WHERE id IN(:ids)")
     void deleteNotes(@NonNull Long[] ids);

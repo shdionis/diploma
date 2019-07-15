@@ -11,8 +11,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ru.yandex.sharov.example.notes.data.NoteInteractor;
-import ru.yandex.sharov.example.notes.data.Note;
+import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
+import ru.yandex.sharov.example.notes.interact.NetworkInteractionsFactory;
+import ru.yandex.sharov.example.notes.model.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class NoteListViewModel extends ViewModel implements NoteListDataProvider {
@@ -21,6 +22,8 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private final MutableLiveData<Boolean> showProgressBar = new MutableLiveData<>();
     @NonNull
+    private final MutableLiveData<Integer> errorData = new MutableLiveData<>();
+    @NonNull
     private LiveData<List<Note>> fullData;
     @NonNull
     private Observer<List<Note>> fullDataObserver;
@@ -28,11 +31,15 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     private Comparator<Note> comparator;
     @NonNull
     private String filterQuery;
+    @NonNull
+    private LocalRepositoryNoteInteractor dbInteractor;
 
-    public NoteListViewModel(@NonNull NoteInteractor dbInteractor) {
+    public NoteListViewModel(@NonNull LocalRepositoryNoteInteractor dbInteractor) {
         comparator = UIUtil.ASC_NOTE_COMPARATOR;
         filterQuery = "";
-        fullDataObserver = new FullDataObserver();
+        showProgressBar.setValue(Boolean.TRUE);
+        fullDataObserver = new FullDataObserver(dbInteractor, errorData);
+        this.dbInteractor = dbInteractor;
         fullData = dbInteractor.getData();
         fullData.observeForever(fullDataObserver);
     }
@@ -46,6 +53,11 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     public LiveData<List<Note>> getData() {
         return data;
+    }
+
+    @NonNull
+    public MutableLiveData<Integer> getErrorData() {
+        return errorData;
     }
 
     @NonNull
@@ -87,11 +99,37 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
         }
     }
 
+    public void syncData() {
+        //TODO: Синхронизация
+    }
+
+    public void pullData() {
+        showProgressBar.setValue(Boolean.TRUE);
+        NetworkInteractionsFactory.createGetRemoteNotesTask(dbInteractor, errorData).execute();
+    }
+
+    public void hideProgressBar() {
+        showProgressBar.setValue(Boolean.FALSE);
+    }
+
     private class FullDataObserver implements Observer<List<Note>> {
+
+        private LocalRepositoryNoteInteractor dbInteractor;
+        private MutableLiveData<Integer> errorData;
+
+        public FullDataObserver(LocalRepositoryNoteInteractor dbInteractor, MutableLiveData<Integer> errorData) {
+            this.dbInteractor = dbInteractor;
+            this.errorData = errorData;
+        }
+
         @Override
         public void onChanged(@NonNull List<Note> notes) {
-            if (showProgressBar.getValue() == null || showProgressBar.getValue() == Boolean.FALSE) {
-                showProgressBar.setValue(Boolean.TRUE);
+            if(notes.isEmpty()) {
+                NetworkInteractionsFactory.createGetRemoteNotesTask(dbInteractor, errorData).execute();
+                return;
+            }
+            if (showProgressBar.getValue() == null || showProgressBar.getValue() == Boolean.TRUE) {
+                showProgressBar.setValue(Boolean.FALSE);
             }
             refreshData(notes);
         }
