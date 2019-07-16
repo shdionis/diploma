@@ -1,18 +1,24 @@
 package ru.yandex.sharov.example.notes.viewmodel;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Consumer;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ru.yandex.sharov.example.notes.R;
 import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
-import ru.yandex.sharov.example.notes.interact.NetworkInteractionsFactory;
+import ru.yandex.sharov.example.notes.interact.RemoteNotesServiceInteractor;
+import ru.yandex.sharov.example.notes.interact.interactions.StateRestInteraction;
+import ru.yandex.sharov.example.notes.interact.interactions.Type;
 import ru.yandex.sharov.example.notes.model.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
@@ -22,7 +28,7 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private final MutableLiveData<Boolean> showProgressBar = new MutableLiveData<>();
     @NonNull
-    private final MutableLiveData<Integer> errorData = new MutableLiveData<>();
+    private final MutableLiveData<State> stateInteraction = new MutableLiveData<>();
     @NonNull
     private LiveData<List<Note>> fullData;
     @NonNull
@@ -32,15 +38,15 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private String filterQuery;
     @NonNull
-    private LocalRepositoryNoteInteractor dbInteractor;
+    private RemoteNotesServiceInteractor remoteStorageInteractor;
 
-    public NoteListViewModel(@NonNull LocalRepositoryNoteInteractor dbInteractor) {
+    public NoteListViewModel(@NonNull LocalRepositoryNoteInteractor dbInteractor, RemoteNotesServiceInteractor remoteStorageInteractor) {
+        this.remoteStorageInteractor = remoteStorageInteractor;
         comparator = UIUtil.ASC_NOTE_COMPARATOR;
         filterQuery = "";
-        showProgressBar.setValue(Boolean.TRUE);
-        fullDataObserver = new FullDataObserver(dbInteractor, errorData);
-        this.dbInteractor = dbInteractor;
+        fullDataObserver = new FullDataObserver();
         fullData = dbInteractor.getData();
+        showProgressBar.setValue(Boolean.TRUE);
         fullData.observeForever(fullDataObserver);
     }
 
@@ -56,12 +62,12 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     }
 
     @NonNull
-    public MutableLiveData<Integer> getErrorData() {
-        return errorData;
+    public LiveData<State> getStateInteraction() {
+        return stateInteraction;
     }
 
     @NonNull
-    public LiveData<Boolean> isShowProgressBar() {
+    public LiveData<Boolean> getShowProgressBarStatus() {
         return showProgressBar;
     }
 
@@ -104,34 +110,83 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     }
 
     public void pullData() {
-        showProgressBar.setValue(Boolean.TRUE);
-        NetworkInteractionsFactory.createGetRemoteNotesTask(dbInteractor, errorData).execute();
+        showProgressBar();
+        remoteStorageInteractor.pullDataToLocalStorage(stateRestInteraction -> {
+            if(stateRestInteraction == null) {
+                hideProgressBar();
+                return;
+            }
+            int message;
+            switch (stateRestInteraction.getCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    message = R.string.http_not_found_error;
+                    break;
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    message = R.string.http_internal_error;
+                    break;
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    message = R.string.http_unauthorized_error;
+                    break;
+                case HttpURLConnection.HTTP_FORBIDDEN:
+                    message = R.string.http_forbidden_error;
+                    break;
+                default:
+                    message = R.string.http_connection_error;
+            }
+            stateInteraction.setValue(new State(stateRestInteraction.getType(), message));
+            refreshData();
+            hideProgressBar();
+        });
     }
 
     public void hideProgressBar() {
-        showProgressBar.setValue(Boolean.FALSE);
+        if (Boolean.TRUE.equals(showProgressBar.getValue())) {
+            showProgressBar.setValue(Boolean.FALSE);
+        }
+    }
+    public void showProgressBar() {
+        if (Boolean.FALSE.equals(showProgressBar.getValue())) {
+            showProgressBar.setValue(Boolean.TRUE);
+        }
+    }
+
+    public void clearState() {
+        stateInteraction.setValue(null);
     }
 
     private class FullDataObserver implements Observer<List<Note>> {
-
-        private LocalRepositoryNoteInteractor dbInteractor;
-        private MutableLiveData<Integer> errorData;
-
-        public FullDataObserver(LocalRepositoryNoteInteractor dbInteractor, MutableLiveData<Integer> errorData) {
-            this.dbInteractor = dbInteractor;
-            this.errorData = errorData;
-        }
-
         @Override
         public void onChanged(@NonNull List<Note> notes) {
-            if(notes.isEmpty()) {
-                NetworkInteractionsFactory.createGetRemoteNotesTask(dbInteractor, errorData).execute();
+            if (notes.isEmpty()) {
+                pullData();
                 return;
             }
-            if (showProgressBar.getValue() == null || showProgressBar.getValue() == Boolean.TRUE) {
-                showProgressBar.setValue(Boolean.FALSE);
-            }
+            hideProgressBar();
             refreshData(notes);
         }
+    }
+
+    public static class State {
+        @NonNull
+        private Type type;
+        @Nullable
+        private int errorMessage;
+
+        public State(@NonNull Type type, int errorMessage) {
+            this.type = type;
+            this.errorMessage = errorMessage;
+        }
+
+        @NonNull
+        public Type getType() {
+            return type;
+        }
+
+        @Nullable
+        public int getErrorMessage() {
+            return errorMessage;
+        }
+
+
     }
 }

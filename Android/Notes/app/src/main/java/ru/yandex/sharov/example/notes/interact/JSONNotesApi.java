@@ -1,5 +1,7 @@
 package ru.yandex.sharov.example.notes.interact;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -11,10 +13,12 @@ import ru.yandex.sharov.example.notes.model.RemoteNote;
 
 public interface JSONNotesApi {
     @GET("get")
-    Call<List<RemoteNote>> getAllNotes(@Query("version") int version, @Query("name") String name);
+    @NonNull
+    Call<List<RemoteNote>> getAllNotes(@NonNull @Query("version") int version, @NonNull @Query("name") String name);
 
     @POST("sync")
-    Call<List<RemoteNote>> syncAllNotes(@Field("version") int version,
-                                        @Field("user") String user,
-                                        @Field("notes") List<RemoteNote> notes);
+    @NonNull
+    Call<List<RemoteNote>> syncAllNotes(@NonNull @Field("version") int version,
+                                        @NonNull @Field("user") String user,
+                                        @NonNull @Field("notes") List<RemoteNote> notes);
 }

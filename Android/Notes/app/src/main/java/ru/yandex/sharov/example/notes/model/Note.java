@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.util.UUID;
-
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
 @Entity(tableName = "notes")
@@ -32,21 +30,21 @@ public class Note {
     }
 
     @Ignore
-    public Note(@NonNull Long id, @NonNull String title, @NonNull Long date, @Nullable String text) {
+    public Note(@NonNull Long id, @NonNull String title, @NonNull Long date, @Nullable String content) {
         this();
         this.id = id;
         this.title = title;
         this.date = date;
-        this.content = text;
+        this.content = content;
     }
 
     @Ignore
-    public Note(@NonNull RemoteNote rnote) {
-        this.guid = rnote.getGuid();
-        this.date = rnote.getDate();
-        this.title = rnote.getTitle();
-        this.content = rnote.getContent();
-        this.deleted  =rnote.getDeleted();
+    public Note(@NonNull String guid, @NonNull String title, @Nullable String content, @NonNull Long date, @NonNull Boolean deleted) {
+        this.guid = guid;
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.deleted = deleted;
     }
 
     @NonNull

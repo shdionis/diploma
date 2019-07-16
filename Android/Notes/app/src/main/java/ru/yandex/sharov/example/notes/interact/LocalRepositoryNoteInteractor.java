@@ -10,10 +10,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
-import java.util.Set;
 
-import ru.yandex.sharov.example.notes.model.Note;
 import ru.yandex.sharov.example.notes.data.NotesDatabase;
+import ru.yandex.sharov.example.notes.interact.interactions.DatabaseInteractionsFactory;
+import ru.yandex.sharov.example.notes.model.Note;
 
 public class LocalRepositoryNoteInteractor {
 
@@ -26,6 +26,8 @@ public class LocalRepositoryNoteInteractor {
     private LiveData<List<Note>> dbData;
     @NonNull
     private DatabaseInteractionsFactory interactionsFactory;
+    @NonNull
+    private NotesDatabase database;
 
     private LocalRepositoryNoteInteractor(@NonNull Context context) {
         data = new MutableLiveData<>();
@@ -34,9 +36,10 @@ public class LocalRepositoryNoteInteractor {
 
     private void initDataLayer(@NonNull Context context) {
         Consumer<NotesDatabase> consumer = notesDatabase -> {
-            interactionsFactory = DatabaseInteractionsFactory.newInstance(notesDatabase.getNoteDao());
-            dbData = notesDatabase.getNoteDao().getAllNotes();
-            dbData.observeForever(notes -> data.setValue(notes));
+            interactionsFactory = DatabaseInteractionsFactory.newInstance(notesDatabase);
+            database = notesDatabase;
+            dbData = database.getNoteDao().getAllNotes();
+            dbData.observeForever(data::setValue);
 
         };
 
@@ -67,8 +70,8 @@ public class LocalRepositoryNoteInteractor {
         interactionsFactory.createInsertNotesTask().execute(note);
     }
 
-    public void addOrUpdateNote(@NonNull List<Note> notes) {
-        interactionsFactory.createInsertNotesTask().execute(notes.toArray(new Note[0]));
+    public void addOrUpdateNotes(@NonNull List<Note> notes) {
+        interactionsFactory.createMergeNotesTask().execute(notes.toArray(new Note[0]));
     }
 
     public void removeNote(long noteId) {
@@ -87,9 +90,10 @@ public class LocalRepositoryNoteInteractor {
 
         @NonNull
         private final Context context;
+        @NonNull
         private final Consumer<NotesDatabase> dbConsumer;
 
-        private InitDastabase(@NonNull Context context, Consumer<NotesDatabase> dbConsumer) {
+        private InitDastabase(@NonNull Context context, @NonNull Consumer<NotesDatabase> dbConsumer) {
             this.context = context;
             this.dbConsumer = dbConsumer;
         }

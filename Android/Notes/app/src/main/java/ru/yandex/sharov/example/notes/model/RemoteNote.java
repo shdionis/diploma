@@ -1,78 +1,74 @@
 package ru.yandex.sharov.example.notes.model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class RemoteNote {
 
-    @SerializedName("guid")
-    @Expose
+    @NonNull
     private String guid;
-
-    @SerializedName("title")
-    @Expose
+    @NonNull
     private String title;
-
-    @SerializedName("content")
-    @Expose
+    @Nullable
     private String content;
-
-    @SerializedName("date")
-    @Expose
+    @NonNull
     private Long date;
-
-    @SerializedName("deleted")
-    @Expose
+    @NonNull
     private Boolean deleted;
 
     public RemoteNote() {
     }
 
-    public RemoteNote(Note note) {
-        this.guid = note.getGuid();
-        this.title = note.getTitle();
-        this.content = note.getContent();
-        this.date = note.getDate();
-        this.deleted = note.getDeleted();
+    public RemoteNote(@NonNull String guid, @NonNull String title, @Nullable String content, @NonNull Long date, @NonNull Boolean deleted) {
+        this.guid = guid;
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.deleted = deleted;
     }
 
+    @NonNull
     public String getGuid() {
         return guid;
     }
 
-    public void setGuid(String guid) {
+    public void setGuid(@NonNull String guid) {
         this.guid = guid;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         this.title = title;
     }
 
+    @Nullable
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(@Nullable String content) {
         this.content = content;
     }
 
+    @NonNull
     public Long getDate() {
         return date;
     }
 
-    public void setDate(Long date) {
+    public void setDate(@NonNull Long date) {
         this.date = date;
     }
 
+    @NonNull
     public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(@NonNull Boolean deleted) {
         this.deleted = deleted;
     }
 }

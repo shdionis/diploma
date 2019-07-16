@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import ru.yandex.sharov.example.notes.interact.interactions.Type;
 import ru.yandex.sharov.example.notes.util.UIBehaviorHandlerFactory;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
@@ -65,23 +66,25 @@ public class NotesListFragment extends Fragment {
         addNoteFab.setOnClickListener(v -> listener.onAddingNote());
         View progressBarView = rootV.findViewById(R.id.progress_bar_load_data);
         View notesListViewContainer = rootV.findViewById(R.id.note_list_views_container);
-        noteListViewModel.isShowProgressBar().observe(this, progressShowFlag -> {
-            if (!progressShowFlag) {
-                progressBarView.setVisibility(View.INVISIBLE);
-                notesListViewContainer.setVisibility(View.VISIBLE);
-            } else {
-                progressBarView.setVisibility(View.VISIBLE);
-                notesListViewContainer.setVisibility(View.INVISIBLE);
-            }
-        });
-        noteListViewModel.getErrorData().observe(this, (id -> {
-            noteListViewModel.hideProgressBar();
-            if (id != null) {
-                Snackbar snack = Snackbar.make(notesListViewContainer, id, Snackbar.LENGTH_LONG);
-                snack.setAction("Повторить", view -> {
+        if (progressBarView != null && notesListViewContainer != null) {
+            noteListViewModel.getShowProgressBarStatus().observe(this, progressShowFlag -> {
+                if (!progressShowFlag) {
+                    progressBarView.setVisibility(View.INVISIBLE);
+                    notesListViewContainer.setVisibility(View.VISIBLE);
+                } else {
+                    progressBarView.setVisibility(View.VISIBLE);
+                    notesListViewContainer.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
+        noteListViewModel.getStateInteraction().observe(this, (message -> {
+            if (message != null && message.getType() == Type.ERROR) {
+                Snackbar snack = Snackbar.make(notesListViewContainer, message.getErrorMessage(), Snackbar.LENGTH_LONG);
+                snack.setAction(R.string.retry_label, view -> {
                     noteListViewModel.pullData();
                     snack.dismiss();
                 });
+                noteListViewModel.clearState();
                 snack.setActionTextColor(Color.BLUE);
                 snack.show();
             }
@@ -131,7 +134,7 @@ public class NotesListFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_sync) {
             noteListViewModel.pullData();
         }
