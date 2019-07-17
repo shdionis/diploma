@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.ui;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Collections;
 import java.util.List;
 
-import ru.yandex.sharov.example.notes.model.Note;
+import ru.yandex.sharov.example.notes.NoteItemOnClickListener;
+import ru.yandex.sharov.example.notes.R;
+import ru.yandex.sharov.example.notes.entities.Note;
 
 public class NotesRecyclerViewAdapter extends RecyclerView.Adapter {
 

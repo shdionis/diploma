@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Comparator;
 
-import ru.yandex.sharov.example.notes.model.Note;
+import ru.yandex.sharov.example.notes.entities.Note;
 
 public class UIUtil {
 

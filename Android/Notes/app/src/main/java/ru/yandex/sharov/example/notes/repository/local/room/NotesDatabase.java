@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.repository.local.room;
 
 import android.content.Context;
 
@@ -8,8 +8,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import ru.yandex.sharov.example.notes.data.migrations.Migrations;
-import ru.yandex.sharov.example.notes.model.Note;
+import ru.yandex.sharov.example.notes.entities.Note;
 
 @Database(entities = {Note.class}, version = 2, exportSchema = false)
 public abstract class NotesDatabase extends RoomDatabase {

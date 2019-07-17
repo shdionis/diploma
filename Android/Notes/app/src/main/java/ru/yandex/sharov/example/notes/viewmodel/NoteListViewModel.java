@@ -2,7 +2,6 @@ package ru.yandex.sharov.example.notes.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Consumer;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -15,11 +14,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import ru.yandex.sharov.example.notes.R;
-import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
-import ru.yandex.sharov.example.notes.interact.RemoteNotesServiceInteractor;
-import ru.yandex.sharov.example.notes.interact.interactions.StateRestInteraction;
+import ru.yandex.sharov.example.notes.entities.Note;
+import ru.yandex.sharov.example.notes.interact.NotesUseCases;
 import ru.yandex.sharov.example.notes.interact.interactions.Type;
-import ru.yandex.sharov.example.notes.model.Note;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
 public class NoteListViewModel extends ViewModel implements NoteListDataProvider {
@@ -38,14 +35,14 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private String filterQuery;
     @NonNull
-    private RemoteNotesServiceInteractor remoteStorageInteractor;
+    private NotesUseCases interactor;
 
-    public NoteListViewModel(@NonNull LocalRepositoryNoteInteractor dbInteractor, RemoteNotesServiceInteractor remoteStorageInteractor) {
-        this.remoteStorageInteractor = remoteStorageInteractor;
+    public NoteListViewModel(@NonNull NotesUseCases interactor) {
+        this.interactor = interactor;
         comparator = UIUtil.ASC_NOTE_COMPARATOR;
         filterQuery = "";
         fullDataObserver = new FullDataObserver();
-        fullData = dbInteractor.getData();
+        fullData = interactor.getAllNotes();
         showProgressBar.setValue(Boolean.TRUE);
         fullData.observeForever(fullDataObserver);
     }
@@ -103,6 +100,7 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
         } else {
             refreshData(Collections.emptyList());
         }
+        stateInteraction.setValue(new State(Type.SUCCESS));
     }
 
     public void syncData() {
@@ -111,8 +109,8 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
 
     public void pullData() {
         showProgressBar();
-        remoteStorageInteractor.pullDataToLocalStorage(stateRestInteraction -> {
-            if(stateRestInteraction == null) {
+        interactor.pullDataToLocalStorage(stateRestInteraction -> {
+            if (stateRestInteraction == null) {
                 hideProgressBar();
                 return;
             }
@@ -144,14 +142,11 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
             showProgressBar.setValue(Boolean.FALSE);
         }
     }
+
     public void showProgressBar() {
         if (Boolean.FALSE.equals(showProgressBar.getValue())) {
             showProgressBar.setValue(Boolean.TRUE);
         }
-    }
-
-    public void clearState() {
-        stateInteraction.setValue(null);
     }
 
     private class FullDataObserver implements Observer<List<Note>> {
@@ -175,6 +170,10 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
         public State(@NonNull Type type, int errorMessage) {
             this.type = type;
             this.errorMessage = errorMessage;
+        }
+
+        public State(@NonNull Type type) {
+            this.type = type;
         }
 
         @NonNull

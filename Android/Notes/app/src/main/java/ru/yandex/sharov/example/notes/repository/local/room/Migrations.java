@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.data.migrations;
+package ru.yandex.sharov.example.notes.repository.local.room;
 
 import android.content.ContentValues;
 import android.database.Cursor;

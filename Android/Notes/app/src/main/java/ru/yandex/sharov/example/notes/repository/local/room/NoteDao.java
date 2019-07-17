@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.repository.local.room;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,11 +8,10 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import ru.yandex.sharov.example.notes.model.Note;
+import ru.yandex.sharov.example.notes.entities.Note;
 
 @Dao
 public interface NoteDao {
@@ -32,10 +31,12 @@ public interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOrUpdateNotes(@NonNull Iterable<Note> note);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOrUpdateNotes(@NonNull Note... note);
+
     @Query("DELETE FROM notes WHERE id IN(:ids)")
     void deleteNotesByIds(@NonNull Long[] ids);
 
     @Query("DELETE FROM notes WHERE guid IN(:ids)")
     void deleteNotesByUIDs(@NonNull Set<String> ids);
-
 }

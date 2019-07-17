@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.model;
+package ru.yandex.sharov.example.notes.entities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.interact;
+package ru.yandex.sharov.example.notes.repository.remote;
 
 import androidx.annotation.NonNull;
 
@@ -9,12 +9,13 @@ import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-import ru.yandex.sharov.example.notes.model.RemoteNote;
+import ru.yandex.sharov.example.notes.entities.RemoteNote;
 
-public interface JSONNotesApi {
+public interface NotesServiceApi {
     @GET("get")
     @NonNull
-    Call<List<RemoteNote>> getAllNotes(@NonNull @Query("version") int version, @NonNull @Query("name") String name);
+    Call<List<RemoteNote>> getAllNotes(@NonNull @Query("version") int version,
+                                       @NonNull @Query("name") String name);
 
     @POST("sync")
     @NonNull

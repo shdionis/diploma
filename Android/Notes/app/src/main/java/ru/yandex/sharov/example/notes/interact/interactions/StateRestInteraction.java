@@ -52,13 +52,13 @@ public class StateRestInteraction {
         this.exception = exception;
     }
 
-    @Nullable
+    @NonNull
     public StateRestInteraction withCode(int code) {
         this.code = code;
         return this;
     }
 
-    @Nullable
+    @NonNull
     public StateRestInteraction withException(@Nullable Throwable exception) {
         this.exception = exception;
         return this;

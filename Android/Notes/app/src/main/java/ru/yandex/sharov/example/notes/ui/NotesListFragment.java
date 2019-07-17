@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,6 +26,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import ru.yandex.sharov.example.notes.NoteItemOnClickListener;
+import ru.yandex.sharov.example.notes.NoteItemOnClickListenerProvider;
+import ru.yandex.sharov.example.notes.R;
 import ru.yandex.sharov.example.notes.interact.interactions.Type;
 import ru.yandex.sharov.example.notes.util.UIBehaviorHandlerFactory;
 import ru.yandex.sharov.example.notes.util.UIUtil;
@@ -60,12 +63,12 @@ public class NotesListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
         View rootV = inflater.inflate(R.layout.notes_list_fragment, container, false);
-        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(
-                requireContext().getApplicationContext())).get(NoteListViewModel.class);
         FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
         addNoteFab.setOnClickListener(v -> listener.onAddingNote());
         View progressBarView = rootV.findViewById(R.id.progress_bar_load_data);
         View notesListViewContainer = rootV.findViewById(R.id.note_list_views_container);
+        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(
+                requireContext().getApplicationContext())).get(NoteListViewModel.class);
         if (progressBarView != null && notesListViewContainer != null) {
             noteListViewModel.getShowProgressBarStatus().observe(this, progressShowFlag -> {
                 if (!progressShowFlag) {
@@ -77,18 +80,17 @@ public class NotesListFragment extends Fragment {
                 }
             });
         }
-        noteListViewModel.getStateInteraction().observe(this, (message -> {
+        noteListViewModel.getStateInteraction().observe(this, message -> {
             if (message != null && message.getType() == Type.ERROR) {
                 Snackbar snack = Snackbar.make(notesListViewContainer, message.getErrorMessage(), Snackbar.LENGTH_LONG);
                 snack.setAction(R.string.retry_label, view -> {
                     noteListViewModel.pullData();
                     snack.dismiss();
                 });
-                noteListViewModel.clearState();
                 snack.setActionTextColor(Color.BLUE);
                 snack.show();
             }
-        }));
+        });
         initNoteListRecyclerView(rootV);
         initBottomSheet(rootV, addNoteFab);
         return rootV;

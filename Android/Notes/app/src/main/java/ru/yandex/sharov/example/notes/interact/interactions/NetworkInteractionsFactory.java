@@ -14,17 +14,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.HttpException;
 import retrofit2.Response;
-import ru.yandex.sharov.example.notes.interact.LocalRepositoryNoteInteractor;
-import ru.yandex.sharov.example.notes.model.Note;
-import ru.yandex.sharov.example.notes.model.RemoteNote;
-import ru.yandex.sharov.example.notes.model.util.DataConvertUtil;
+import ru.yandex.sharov.example.notes.entities.Note;
+import ru.yandex.sharov.example.notes.entities.RemoteNote;
+import ru.yandex.sharov.example.notes.entities.util.DataConvertUtil;
+import ru.yandex.sharov.example.notes.interact.NotesUseCases;
 
 public class NetworkInteractionsFactory {
 
-
-    public static ExecutorService executeGetRemoteNotesTask(Call<List<RemoteNote>> remoteCall, LocalRepositoryNoteInteractor dbIteractor, Consumer<StateRestInteraction> errorDataConsumer) {
+    public static ExecutorService executeGetRemoteNotesTask(Call<List<RemoteNote>> remoteCall, NotesUseCases interactor, Consumer<StateRestInteraction> errorDataConsumer) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(new GetNotesRunnable(remoteCall, dbIteractor, errorDataConsumer));
+        executorService.submit(new GetNotesRunnable(remoteCall, interactor, errorDataConsumer));
         return executorService;
     }
 
@@ -32,13 +31,13 @@ public class NetworkInteractionsFactory {
         @NonNull
         private final Call<List<RemoteNote>> remoteCall;
         @NonNull
-        private final LocalRepositoryNoteInteractor dbInteractor;
+        private final NotesUseCases interactor;
         @NonNull
         private final Consumer<StateRestInteraction> errorData;
 
-        public GetNotesRunnable(@NonNull Call<List<RemoteNote>> remoteCall, @NonNull LocalRepositoryNoteInteractor dbInteractor, @NonNull Consumer<StateRestInteraction> errorData) {
+        public GetNotesRunnable(@NonNull Call<List<RemoteNote>> remoteCall, @NonNull NotesUseCases interactor, @NonNull Consumer<StateRestInteraction> errorData) {
             this.remoteCall = remoteCall;
-            this.dbInteractor = dbInteractor;
+            this.interactor = interactor;
             this.errorData = errorData;
         }
 
@@ -57,7 +56,7 @@ public class NetworkInteractionsFactory {
                         for (RemoteNote rnote : remoteNotes) {
                             localNotes.add(DataConvertUtil.convertRemoteNoteToNote(rnote));
                         }
-                        dbInteractor.addOrUpdateNotes(localNotes);
+                        interactor.addOrUpdateNotes(localNotes);
                         state = StateRestInteraction.createSuccessState();
                     } else {
                         state = StateRestInteraction.createErrorState()

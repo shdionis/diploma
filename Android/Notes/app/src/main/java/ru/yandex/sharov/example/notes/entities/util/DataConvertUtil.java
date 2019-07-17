@@ -1,10 +1,9 @@
-package ru.yandex.sharov.example.notes.model.util;
+package ru.yandex.sharov.example.notes.entities.util;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import ru.yandex.sharov.example.notes.model.Note;
-import ru.yandex.sharov.example.notes.model.RemoteNote;
+import ru.yandex.sharov.example.notes.entities.Note;
+import ru.yandex.sharov.example.notes.entities.RemoteNote;
 
 public class DataConvertUtil {
     @NonNull

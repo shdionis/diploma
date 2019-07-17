@@ -1,10 +1,12 @@
-package ru.yandex.sharov.example.notes.model;
+package ru.yandex.sharov.example.notes.entities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.util.UUID;
 
 import ru.yandex.sharov.example.notes.util.FormatUtil;
 
@@ -26,7 +28,10 @@ public class Note {
     private Boolean deleted;
 
     public Note() {
-        date = System.currentTimeMillis();
+        this.date = System.currentTimeMillis();
+        this.title = "";
+        this.guid = UUID.randomUUID().toString();
+        this.deleted = Boolean.FALSE;
     }
 
     @Ignore
