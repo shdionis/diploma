@@ -9,12 +9,9 @@ import retrofit2.Call;
 import ru.yandex.sharov.example.notes.entities.RemoteNote;
 
 public class RemoteServiceRepository {
-    @NonNull
     private static final Object LOCK = new Object();
-
     @Nullable
     private static volatile RemoteServiceRepository instance;
-
     @NonNull
     private NotesService service;
 

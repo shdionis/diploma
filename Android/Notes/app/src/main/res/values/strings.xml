@@ -9,10 +9,10 @@
     <string name="text_dialog_delete">Удалить заметку?</string>
     <string name="bottom_sheet_peek">Дополнительно</string>
     <string name="toast_save_success">Заметка сохранена</string>
-    <string name="toast_delete_success">Заметека удалена</string>
+    <string name="toast_delete_success">Заметка удалена</string>
     <string name="http_connection_error">Ошибка при загрузке данных</string>
     <string name="http_not_found_error">Удаленный ресурс не найден</string>
-    <string name="http_internal_error">Внутреняя ошибка сервера</string>
+    <string name="http_internal_error">Внутренняя ошибка сервера</string>
     <string name="http_forbidden_error">Доступ запрещен</string>
     <string name="http_unauthorized_error">Ошибка авторизации</string>
     <string name="retry_label">Повторить</string>

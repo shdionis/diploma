@@ -9,13 +9,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import ru.yandex.sharov.example.notes.entities.Note;
-import ru.yandex.sharov.example.notes.interact.NotesUseCases;
+import ru.yandex.sharov.example.notes.interact.NoteUseCases;
 
 public class NoteViewModel extends ViewModel {
-    @NonNull
     private final MutableLiveData<Note> note = new MutableLiveData<>();
     @NonNull
-    private NotesUseCases interactor;
+    private NoteUseCases interactor;
     @NonNull
     private ObservableField<Note> noteBind = new ObservableField<>();
     @Nullable
@@ -29,8 +28,8 @@ public class NoteViewModel extends ViewModel {
         }
     };
 
-    public NoteViewModel(@NonNull NotesUseCases dbHelper) {
-        this.interactor = dbHelper;
+    public NoteViewModel(@NonNull NoteUseCases interactor) {
+        this.interactor = interactor;
         note.observeForever(bindingObserver);
     }
 

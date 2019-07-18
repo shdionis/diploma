@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import ru.yandex.sharov.example.notes.interact.NoteUseCases;
 import ru.yandex.sharov.example.notes.interact.NotesInteractor;
-import ru.yandex.sharov.example.notes.interact.NotesUseCases;
 import ru.yandex.sharov.example.notes.repository.local.LocalStorageRepository;
 import ru.yandex.sharov.example.notes.repository.local.PreferencesRepository;
 import ru.yandex.sharov.example.notes.repository.remote.RemoteServiceRepository;
@@ -24,7 +24,7 @@ public class NoteViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     private final RemoteServiceRepository remoteServiceRepository;
     @NonNull
-    private final NotesUseCases interactor;
+    private final NoteUseCases interactor;
 
     public NoteViewModelFactory(@NonNull Context context) {
         this.localStorageRepository = LocalStorageRepository.getInstance(context);

@@ -63,12 +63,21 @@ public class NotesListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
         View rootV = inflater.inflate(R.layout.notes_list_fragment, container, false);
-        FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
-        addNoteFab.setOnClickListener(v -> listener.onAddingNote());
-        View progressBarView = rootV.findViewById(R.id.progress_bar_load_data);
-        View notesListViewContainer = rootV.findViewById(R.id.note_list_views_container);
+        initViewModel(rootV);
+        initNoteListRecyclerView(rootV);
+        initBottomSheet(rootV);
+        return rootV;
+    }
+
+    private void initViewModel(View rootV) {
         noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(
                 requireContext().getApplicationContext())).get(NoteListViewModel.class);
+        View progressBarView = rootV.findViewById(R.id.progress_bar_load_data);
+        View notesListViewContainer = rootV.findViewById(R.id.note_list_views_container);
+        setViewModelObservers(noteListViewModel, progressBarView, notesListViewContainer);
+    }
+
+    private void setViewModelObservers(NoteListViewModel noteListViewModel, View progressBarView, View notesListViewContainer) {
         if (progressBarView != null && notesListViewContainer != null) {
             noteListViewModel.getShowProgressBarStatus().observe(this, progressShowFlag -> {
                 if (!progressShowFlag) {
@@ -91,18 +100,17 @@ public class NotesListFragment extends Fragment {
                 snack.show();
             }
         });
-        initNoteListRecyclerView(rootV);
-        initBottomSheet(rootV, addNoteFab);
-        return rootV;
     }
 
-    private void initBottomSheet(@NonNull View rootV, @NonNull FloatingActionButton fab) {
+    private void initBottomSheet(@NonNull View rootV) {
+        FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
+        addNoteFab.setOnClickListener(v -> listener.onAddingNote());
         View bottomSheet = rootV.findViewById(R.id.bottom_sheet);
         bottomSheet.setVisibility(View.VISIBLE);
         View closeOpenBtn = rootV.findViewById(R.id.bottom_sheet_close_open_btn);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setBottomSheetCallback(
-                UIBehaviorHandlerFactory.createBottomSheetCallback(fab, closeOpenBtn)
+                UIBehaviorHandlerFactory.createBottomSheetCallback(addNoteFab, closeOpenBtn)
         );
         closeOpenBtn.setOnClickListener(
                 UIBehaviorHandlerFactory.createCloseOpenBtnOnClickListener(bottomSheetBehavior)

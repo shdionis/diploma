@@ -15,7 +15,7 @@ import java.util.List;
 
 import ru.yandex.sharov.example.notes.R;
 import ru.yandex.sharov.example.notes.entities.Note;
-import ru.yandex.sharov.example.notes.interact.NotesUseCases;
+import ru.yandex.sharov.example.notes.interact.NotesListUseCases;
 import ru.yandex.sharov.example.notes.interact.interactions.Type;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 
@@ -35,15 +35,15 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     @NonNull
     private String filterQuery;
     @NonNull
-    private NotesUseCases interactor;
+    private NotesListUseCases interactor;
 
-    public NoteListViewModel(@NonNull NotesUseCases interactor) {
+    public NoteListViewModel(@NonNull NotesListUseCases interactor, @NonNull Comparator<Note> comparator) {
         this.interactor = interactor;
-        comparator = UIUtil.ASC_NOTE_COMPARATOR;
+        this.comparator = comparator;
         filterQuery = "";
+        showProgressBar.setValue(Boolean.TRUE);
         fullDataObserver = new FullDataObserver();
         fullData = interactor.getAllNotes();
-        showProgressBar.setValue(Boolean.TRUE);
         fullData.observeForever(fullDataObserver);
     }
 
@@ -92,6 +92,7 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
         List<Note> resultData = filterData(notes);
         Collections.sort(resultData, comparator);
         data.setValue(resultData);
+        stateInteraction.setValue(State.createSuccessState());
     }
 
     public void refreshData() {
@@ -100,7 +101,6 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
         } else {
             refreshData(Collections.emptyList());
         }
-        stateInteraction.setValue(new State(Type.SUCCESS));
     }
 
     public void syncData() {
@@ -114,24 +114,30 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
                 hideProgressBar();
                 return;
             }
-            int message;
-            switch (stateRestInteraction.getCode()) {
-                case HttpURLConnection.HTTP_NOT_FOUND:
-                    message = R.string.http_not_found_error;
-                    break;
-                case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                    message = R.string.http_internal_error;
-                    break;
-                case HttpURLConnection.HTTP_UNAUTHORIZED:
-                    message = R.string.http_unauthorized_error;
-                    break;
-                case HttpURLConnection.HTTP_FORBIDDEN:
-                    message = R.string.http_forbidden_error;
-                    break;
-                default:
-                    message = R.string.http_connection_error;
+            int message = 0;
+            State state;
+            if(Type.ERROR.equals(stateRestInteraction.getType())) {
+                switch (stateRestInteraction.getCode()) {
+                    case HttpURLConnection.HTTP_NOT_FOUND:
+                        message = R.string.http_not_found_error;
+                        break;
+                    case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                        message = R.string.http_internal_error;
+                        break;
+                    case HttpURLConnection.HTTP_UNAUTHORIZED:
+                        message = R.string.http_unauthorized_error;
+                        break;
+                    case HttpURLConnection.HTTP_FORBIDDEN:
+                        message = R.string.http_forbidden_error;
+                        break;
+                    default:
+                        message = R.string.http_connection_error;
+                }
+                state = State.createErrorState(message);
+            } else {
+                state = State.createSuccessState();
             }
-            stateInteraction.setValue(new State(stateRestInteraction.getType(), message));
+            stateInteraction.setValue(state);
             refreshData();
             hideProgressBar();
         });
@@ -164,15 +170,24 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
     public static class State {
         @NonNull
         private Type type;
-        @Nullable
         private int errorMessage;
 
-        public State(@NonNull Type type, int errorMessage) {
+        @NonNull
+        public static State createErrorState(int errorMessage) {
+            return new State(Type.ERROR, errorMessage);
+        }
+
+        @NonNull
+        public static State createSuccessState() {
+            return new State(Type.SUCCESS);
+        }
+
+        private State(@NonNull Type type, int errorMessage) {
             this.type = type;
             this.errorMessage = errorMessage;
         }
 
-        public State(@NonNull Type type) {
+        private State(@NonNull Type type) {
             this.type = type;
         }
 
@@ -181,7 +196,6 @@ public class NoteListViewModel extends ViewModel implements NoteListDataProvider
             return type;
         }
 
-        @Nullable
         public int getErrorMessage() {
             return errorMessage;
         }

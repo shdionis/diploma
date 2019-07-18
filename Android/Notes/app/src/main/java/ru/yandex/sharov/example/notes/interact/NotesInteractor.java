@@ -1,5 +1,7 @@
 package ru.yandex.sharov.example.notes.interact;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Consumer;
@@ -17,7 +19,7 @@ import ru.yandex.sharov.example.notes.repository.local.LocalStorageRepository;
 import ru.yandex.sharov.example.notes.repository.local.PreferencesRepository;
 import ru.yandex.sharov.example.notes.repository.remote.RemoteServiceRepository;
 
-public class NotesInteractor implements NotesUseCases {
+public class NotesInteractor implements NotesListUseCases, NoteUseCases {
 
     private static final Object LOCK = new Object();
     @Nullable

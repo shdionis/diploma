@@ -19,10 +19,6 @@ import ru.yandex.sharov.example.notes.ui.ShowNoteFragment;
 public class NotesActivity extends AppCompatActivity implements NoteItemOnClickListenerProvider, FragmentManager.OnBackStackChangedListener {
 
     private static final String LOG_TAG = "[LOG_TAG:NotesActivity]";
-    private final String viewFragTag = "view";
-    private final String addFragTag = "add";
-    private final String editFragTag = "edit";
-
     @Nullable
     private NoteItemOnClickListener listener;
 
@@ -32,9 +28,8 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
         setContentView(R.layout.activity_notes);
         Log.d(LOG_TAG, " onCreate");
         if (savedInstanceState == null) {
-            String listFragTag = "list";
             NotesListFragment noteListFragment = NotesListFragment.newInstance();
-            replaceFragment(noteListFragment, false, listFragTag);
+            replaceFragment(noteListFragment, false);
         }
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         shouldShowBackButton();
@@ -56,19 +51,19 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
             @Override
             public void onClickNoteItem(@NonNull Long noteId) {
                 ShowNoteFragment showNoteFragment = ShowNoteFragment.newInstance(noteId);
-                replaceFragment(showNoteFragment, true, viewFragTag);
+                replaceFragment(showNoteFragment, true);
             }
 
             @Override
             public void onAddingNote() {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance();
-                replaceFragment(addOrEditFragment, true, addFragTag);
+                replaceFragment(addOrEditFragment, true);
             }
 
             @Override
             public void onEditingNote(@NonNull Long noteId) {
                 NoteAddOrEditFragment addOrEditFragment = NoteAddOrEditFragment.newInstance(noteId);
-                replaceFragment(addOrEditFragment, true, editFragTag);
+                replaceFragment(addOrEditFragment, true);
             }
 
             @Override
@@ -100,12 +95,12 @@ public class NotesActivity extends AppCompatActivity implements NoteItemOnClickL
         getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
     }
 
-    private void replaceFragment(@NonNull Fragment fragment, boolean addToBackStack, @Nullable String tag) {
+    private void replaceFragment(@NonNull Fragment fragment, boolean addToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         if (addToBackStack) {
-            fragmentTransaction.addToBackStack(tag);
+            fragmentTransaction.addToBackStack(null);
         }
         fragmentTransaction.commit();
     }

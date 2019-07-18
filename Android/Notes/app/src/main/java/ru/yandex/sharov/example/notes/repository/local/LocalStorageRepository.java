@@ -1,6 +1,7 @@
 package ru.yandex.sharov.example.notes.repository.local;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,8 +23,8 @@ import ru.yandex.sharov.example.notes.repository.local.room.NotesDatabase;
 
 public class LocalStorageRepository {
 
-    @NonNull
     private static final Object LOCK = new Object();
+    private static final String LOG_TAG = "[LOG_TAG:LocStorage]";
 
     @Nullable
     private static volatile LocalStorageRepository instance;
@@ -36,7 +37,6 @@ public class LocalStorageRepository {
 
     private LocalStorageRepository(@NonNull Context context) {
         this.database = NotesDatabase.getInstance(context);
-        ;
         this.dao = database.getNoteDao();
     }
 
@@ -60,25 +60,25 @@ public class LocalStorageRepository {
 
     @NonNull
     public List<Note> getAllNotesList() {
-        return database.getNoteDao().getAllNotesList();
+        return dao.getAllNotesList();
     }
 
     @Nullable
     public Note getNotesById(long id) {
-        return database.getNoteDao().getNotesById(id);
+        return dao.getNotesById(id);
     }
 
     public void insertOrUpdateNotes(@NonNull Note... notes) {
-        database.getNoteDao().insertOrUpdateNotes(notes);
+        dao.insertOrUpdateNotes(notes);
     }
 
 
     public void deleteNotesByIds(@NonNull Long[] ids) {
-        database.getNoteDao().deleteNotesByIds(ids);
+        dao.deleteNotesByIds(ids);
     }
 
     public void deleteNotesByUIDs(@NonNull Set<String> ids) {
-        database.getNoteDao().deleteNotesByUIDs(ids);
+        dao.deleteNotesByUIDs(ids);
     }
 
     public void mergeNotesList(Collection<Note> notes) {
@@ -113,8 +113,11 @@ public class LocalStorageRepository {
             }
             database.getNoteDao().insertOrUpdateNotes(toUpdate.values());
             database.setTransactionSuccessful();
+        } catch (Exception ex ) {
+            Log.e(LOG_TAG, "Ошибка работы с базой данных", ex);
         } finally {
             database.endTransaction();
         }
+        throw new RuntimeException("ALOHA");
     }
 }

@@ -17,11 +17,11 @@ import retrofit2.Response;
 import ru.yandex.sharov.example.notes.entities.Note;
 import ru.yandex.sharov.example.notes.entities.RemoteNote;
 import ru.yandex.sharov.example.notes.entities.util.DataConvertUtil;
-import ru.yandex.sharov.example.notes.interact.NotesUseCases;
+import ru.yandex.sharov.example.notes.interact.NotesListUseCases;
 
 public class NetworkInteractionsFactory {
 
-    public static ExecutorService executeGetRemoteNotesTask(Call<List<RemoteNote>> remoteCall, NotesUseCases interactor, Consumer<StateRestInteraction> errorDataConsumer) {
+    public static ExecutorService executeGetRemoteNotesTask(Call<List<RemoteNote>> remoteCall, NotesListUseCases interactor, Consumer<StateRestInteraction> errorDataConsumer) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(new GetNotesRunnable(remoteCall, interactor, errorDataConsumer));
         return executorService;
@@ -31,11 +31,11 @@ public class NetworkInteractionsFactory {
         @NonNull
         private final Call<List<RemoteNote>> remoteCall;
         @NonNull
-        private final NotesUseCases interactor;
+        private final NotesListUseCases interactor;
         @NonNull
         private final Consumer<StateRestInteraction> errorData;
 
-        public GetNotesRunnable(@NonNull Call<List<RemoteNote>> remoteCall, @NonNull NotesUseCases interactor, @NonNull Consumer<StateRestInteraction> errorData) {
+        public GetNotesRunnable(@NonNull Call<List<RemoteNote>> remoteCall, @NonNull NotesListUseCases interactor, @NonNull Consumer<StateRestInteraction> errorData) {
             this.remoteCall = remoteCall;
             this.interactor = interactor;
             this.errorData = errorData;

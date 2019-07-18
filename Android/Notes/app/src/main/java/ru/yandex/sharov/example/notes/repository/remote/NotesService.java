@@ -10,9 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NotesService {
     private static int READ_TIMEOUT = 30;
-    @NonNull
     private static final Object LOCK = new Object();
-    @NonNull
     private static final String BASE_URL = "http://10.0.2.2:8080/notes-server-1.0-SNAPSHOT/sync/";
     @NonNull
     private static volatile NotesService instance;

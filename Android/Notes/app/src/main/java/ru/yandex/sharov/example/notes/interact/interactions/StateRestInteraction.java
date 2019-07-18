@@ -31,25 +31,14 @@ public class StateRestInteraction {
         return type;
     }
 
-    public void setType(@NonNull Type type) {
-        this.type = type;
-    }
 
     public int getCode() {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
     @Nullable
     public Throwable getException() {
         return exception;
-    }
-
-    public void setException(@Nullable Throwable exception) {
-        this.exception = exception;
     }
 
     @NonNull
@@ -59,7 +48,7 @@ public class StateRestInteraction {
     }
 
     @NonNull
-    public StateRestInteraction withException(@Nullable Throwable exception) {
+    public StateRestInteraction withException(@NonNull Throwable exception) {
         this.exception = exception;
         return this;
     }

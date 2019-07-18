@@ -6,15 +6,10 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 
 public class PreferencesRepository {
-    @NonNull
     private static final Object LOCK = new Object();
-    @NonNull
     private static final String APP_PREFERENCES = "settings";
-    @NonNull
     private static final String PREF_USER_KEY = "user";
-    @NonNull
     private static final String PREF_VERSION_KEY = "version";
-    @NonNull
     private static final String DEFAULT_PREF_USER = "Denis"; //Hardcode
     private static final int DEFAULT_PREF_VERSION = 0;
     @NonNull
