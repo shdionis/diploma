@@ -5,12 +5,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.collection.ArrayMap;
+import androidx.collection.ArraySet;
 import androidx.lifecycle.LiveData;
 
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +84,7 @@ public class LocalStorageRepository {
     public void mergeNotesList(@NonNull Collection<Note> notes) {
         database.beginTransaction();
         try {
-            Map<String, Note> toUpdate = new HashMap<>();
+            Map<String, Note> toUpdate = new ArrayMap<>();
             Deque<String> toDelete = new LinkedList<>();
             for (Note n : notes) {
                 if (Boolean.TRUE.equals(n.getDeleted())) {
@@ -93,7 +93,7 @@ public class LocalStorageRepository {
                     toUpdate.put(n.getGuid(), n);
                 }
             }
-            Set<String> partToDelete = new HashSet<>();
+            Set<String> partToDelete = new ArraySet<>();
             int i = 0;
             while (!toDelete.isEmpty()) {
                 while (i <= 100 && !toDelete.isEmpty()) {
@@ -113,7 +113,7 @@ public class LocalStorageRepository {
             }
             database.getNoteDao().insertOrUpdateNotes(toUpdate.values());
             database.setTransactionSuccessful();
-        } catch (Exception ex ) {
+        } catch (Exception ex) {
             Log.e(LOG_TAG, "Merge notes list into Database failure!", ex);
         } finally {
             database.endTransaction();
