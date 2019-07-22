@@ -17,6 +17,7 @@ public class PreferencesRepository {
     @NonNull
     private SharedPreferences sPref;
 
+    @NonNull
     public static PreferencesRepository getInstance(@NonNull Context context) {
         if (instance == null) {
             synchronized (LOCK) {

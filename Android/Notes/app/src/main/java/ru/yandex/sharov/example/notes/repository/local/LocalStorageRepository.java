@@ -81,7 +81,7 @@ public class LocalStorageRepository {
         dao.deleteNotesByUIDs(ids);
     }
 
-    public void mergeNotesList(Collection<Note> notes) {
+    public void mergeNotesList(@NonNull Collection<Note> notes) {
         database.beginTransaction();
         try {
             Map<String, Note> toUpdate = new HashMap<>();
@@ -114,10 +114,9 @@ public class LocalStorageRepository {
             database.getNoteDao().insertOrUpdateNotes(toUpdate.values());
             database.setTransactionSuccessful();
         } catch (Exception ex ) {
-            Log.e(LOG_TAG, "Ошибка работы с базой данных", ex);
+            Log.e(LOG_TAG, "Merge notes list into Database failure!", ex);
         } finally {
             database.endTransaction();
         }
-        throw new RuntimeException("ALOHA");
     }
 }

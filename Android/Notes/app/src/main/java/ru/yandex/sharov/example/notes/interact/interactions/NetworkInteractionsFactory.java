@@ -21,6 +21,7 @@ import ru.yandex.sharov.example.notes.interact.NotesListUseCases;
 
 public class NetworkInteractionsFactory {
 
+    @NonNull
     public static ExecutorService executeGetRemoteNotesTask(Call<List<RemoteNote>> remoteCall, NotesListUseCases interactor, Consumer<StateRestInteraction> errorDataConsumer) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(new GetNotesRunnable(remoteCall, interactor, errorDataConsumer));

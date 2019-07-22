@@ -7,6 +7,12 @@ import androidx.annotation.Nullable;
 public class StateRestInteraction {
 
     @NonNull
+    private Type type;
+    private int code;
+    @Nullable
+    private Throwable exception;
+
+    @NonNull
     public static StateRestInteraction createSuccessState() {
         return new StateRestInteraction(Type.SUCCESS);
     }
@@ -15,12 +21,6 @@ public class StateRestInteraction {
     public static StateRestInteraction createErrorState() {
         return new StateRestInteraction(Type.ERROR);
     }
-
-    @NonNull
-    private Type type;
-    private int code;
-    @Nullable
-    private Throwable exception;
 
     public StateRestInteraction(@NonNull Type type) {
         this.type = type;

@@ -56,6 +56,7 @@ public class NotesInteractor implements NotesListUseCases, NoteUseCases {
     }
 
     @Override
+    @NonNull
     public LiveData<List<Note>> getAllNotes() {
         return localRepo.getAllNotes();
     }
@@ -76,6 +77,7 @@ public class NotesInteractor implements NotesListUseCases, NoteUseCases {
     }
 
     @Override
+    @NonNull
     public LiveData<Note> getNote(@NonNull Long id, @NonNull MutableLiveData<Note> noteData) {
         interactionsFactory.createSelectOneNoteTask(id, noteData).execute();
         return noteData;
