@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,9 +18,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import ru.yandex.sharov.example.notes.NoteItemOnClickListener;
+import ru.yandex.sharov.example.notes.NoteItemOnClickListenerProvider;
+import ru.yandex.sharov.example.notes.R;
 import ru.yandex.sharov.example.notes.databinding.AddOrEditNoteFragmentBinding;
 import ru.yandex.sharov.example.notes.util.UIUtil;
-import ru.yandex.sharov.example.notes.viewmodel.factory.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
 import ru.yandex.sharov.example.notes.viewmodel.factory.NoteViewModelFactory;
 
@@ -31,8 +32,6 @@ public class NoteAddOrEditFragment extends Fragment {
     private static final int SAVE_CHANGES_REQUEST_CODE = 1;
     private static final String NOTE_ID_ARG = "noteId";
 
-    private EditText noteTitle;
-    private EditText noteText;
     private NoteItemOnClickListener listener;
     private NoteViewModel noteViewModel;
     private boolean isNewNote = false;
@@ -85,8 +84,6 @@ public class NoteAddOrEditFragment extends Fragment {
         AddOrEditNoteFragmentBinding binding = DataBindingUtil.inflate(inflater, R.layout.add_or_edit_note_fragment, container, false);
         binding.setModel(noteViewModel);
         View rootV = binding.getRoot();
-        noteText = rootV.findViewById(R.id.note_edit_text);
-        noteTitle = rootV.findViewById(R.id.note_edit_title);
         return rootV;
     }
 

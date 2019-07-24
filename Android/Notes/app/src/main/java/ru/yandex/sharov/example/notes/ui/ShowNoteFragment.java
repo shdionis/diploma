@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,9 +18,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import ru.yandex.sharov.example.notes.NoteItemOnClickListener;
+import ru.yandex.sharov.example.notes.NoteItemOnClickListenerProvider;
+import ru.yandex.sharov.example.notes.R;
 import ru.yandex.sharov.example.notes.databinding.NoteViewFragmentBinding;
 import ru.yandex.sharov.example.notes.util.UIUtil;
-import ru.yandex.sharov.example.notes.viewmodel.factory.NoteListViewModelFactory;
 import ru.yandex.sharov.example.notes.viewmodel.NoteViewModel;
 import ru.yandex.sharov.example.notes.viewmodel.factory.NoteViewModelFactory;
 
@@ -62,6 +64,7 @@ public class ShowNoteFragment extends Fragment {
         if (args != null) {
             noteViewModel.getNoteById(args.getLong(NOTE_ARG));
         }
+
     }
 
     @Nullable

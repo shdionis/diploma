@@ -7,17 +7,35 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import ru.yandex.sharov.example.notes.data.NoteInteractor;
+import ru.yandex.sharov.example.notes.interact.NotesInteractor;
+import ru.yandex.sharov.example.notes.repository.local.LocalStorageRepository;
+import ru.yandex.sharov.example.notes.repository.local.PreferencesRepository;
+import ru.yandex.sharov.example.notes.repository.remote.RemoteServiceRepository;
+import ru.yandex.sharov.example.notes.util.UIUtil;
 import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
 
 public class NoteListViewModelFactory implements ViewModelProvider.Factory {
 
     private static final String LOG_TAG = "[LOG_TAG:NLVMFactory]";
+
     @NonNull
-    private final NoteInteractor dbInteractor;
+    private final LocalStorageRepository localStorageRepository;
+    @NonNull
+    private final PreferencesRepository preferencesRepository;
+    @NonNull
+    private final RemoteServiceRepository remoteServiceRepository;
+    @NonNull
+    private final NotesInteractor interactor;
 
     public NoteListViewModelFactory(@NonNull Context context) {
-        dbInteractor = NoteInteractor.getInstance(context);
+        this.localStorageRepository = LocalStorageRepository.getInstance(context);
+        this.preferencesRepository = PreferencesRepository.getInstance(context);
+        this.remoteServiceRepository = RemoteServiceRepository.getInstance();
+        this.interactor = NotesInteractor.getInstance(
+                localStorageRepository,
+                remoteServiceRepository,
+                preferencesRepository
+        );
     }
 
     @NonNull
@@ -25,7 +43,7 @@ public class NoteListViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         Log.d(LOG_TAG, "create");
         if (modelClass.isAssignableFrom(NoteListViewModel.class)) {
-            return (T) new NoteListViewModel(dbInteractor);
+            return (T) new NoteListViewModel(interactor, UIUtil.ASC_NOTE_COMPARATOR);
         } else {
             throw new IllegalArgumentException("Unknown ViewModel class!");
         }

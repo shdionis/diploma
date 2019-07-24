@@ -1,10 +1,14 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -20,7 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
+import ru.yandex.sharov.example.notes.NoteItemOnClickListener;
+import ru.yandex.sharov.example.notes.NoteItemOnClickListenerProvider;
+import ru.yandex.sharov.example.notes.R;
+import ru.yandex.sharov.example.notes.interact.interactions.Type;
 import ru.yandex.sharov.example.notes.util.UIBehaviorHandlerFactory;
 import ru.yandex.sharov.example.notes.util.UIUtil;
 import ru.yandex.sharov.example.notes.viewmodel.NoteListViewModel;
@@ -42,6 +51,7 @@ public class NotesListFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        setHasOptionsMenu(true);
         Log.d(LOG_TAG, " onAttach");
         UIUtil.assertContextImplementsInterface(context, NoteItemOnClickListenerProvider.class);
         listener = ((NoteItemOnClickListenerProvider) context).getListener();
@@ -53,29 +63,54 @@ public class NotesListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, " onCreateView");
         View rootV = inflater.inflate(R.layout.notes_list_fragment, container, false);
-        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(
-                requireContext().getApplicationContext())).get(NoteListViewModel.class);
-        FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
-        addNoteFab.setOnClickListener(v -> listener.onAddingNote());
-        noteListViewModel.isShowProgressBar().observe(this, progressShowFlag -> {
-            if (progressShowFlag) {
-                rootV.findViewById(R.id.progress_bar_load_data).setVisibility(View.INVISIBLE);
-                rootV.findViewById(R.id.note_list_views_container).setVisibility(View.VISIBLE);
-                initNoteListRecyclerView(rootV);
-                initBottomSheet(rootV, addNoteFab);
-            }
-        });
-
+        initViewModel(rootV);
+        initNoteListRecyclerView(rootV);
+        initBottomSheet(rootV);
         return rootV;
     }
 
-    private void initBottomSheet(@NonNull View rootV, @NonNull FloatingActionButton fab) {
+    private void initViewModel(View rootV) {
+        noteListViewModel = ViewModelProviders.of(this, new NoteListViewModelFactory(
+                requireContext().getApplicationContext())).get(NoteListViewModel.class);
+        View progressBarView = rootV.findViewById(R.id.progress_bar_load_data);
+        View notesListViewContainer = rootV.findViewById(R.id.note_list_views_container);
+        setViewModelObservers(noteListViewModel, progressBarView, notesListViewContainer);
+    }
+
+    private void setViewModelObservers(NoteListViewModel noteListViewModel, View progressBarView, View notesListViewContainer) {
+        if (progressBarView != null && notesListViewContainer != null) {
+            noteListViewModel.getShowProgressBarStatus().observe(this, progressShowFlag -> {
+                if (!progressShowFlag) {
+                    progressBarView.setVisibility(View.INVISIBLE);
+                    notesListViewContainer.setVisibility(View.VISIBLE);
+                } else {
+                    progressBarView.setVisibility(View.VISIBLE);
+                    notesListViewContainer.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
+        noteListViewModel.getStateInteraction().observe(this, message -> {
+            if (message != null && message.getType() == Type.ERROR) {
+                Snackbar snack = Snackbar.make(notesListViewContainer, message.getErrorMessage(), Snackbar.LENGTH_LONG);
+                snack.setAction(R.string.retry_label, view -> {
+                    noteListViewModel.pullData();
+                    snack.dismiss();
+                });
+                snack.setActionTextColor(Color.BLUE);
+                snack.show();
+            }
+        });
+    }
+
+    private void initBottomSheet(@NonNull View rootV) {
+        FloatingActionButton addNoteFab = rootV.findViewById(R.id.add_note_fab);
+        addNoteFab.setOnClickListener(v -> listener.onAddingNote());
         View bottomSheet = rootV.findViewById(R.id.bottom_sheet);
         bottomSheet.setVisibility(View.VISIBLE);
         View closeOpenBtn = rootV.findViewById(R.id.bottom_sheet_close_open_btn);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setBottomSheetCallback(
-                UIBehaviorHandlerFactory.createBottomSheetCallback(fab, closeOpenBtn)
+                UIBehaviorHandlerFactory.createBottomSheetCallback(addNoteFab, closeOpenBtn)
         );
         closeOpenBtn.setOnClickListener(
                 UIBehaviorHandlerFactory.createCloseOpenBtnOnClickListener(bottomSheetBehavior)
@@ -100,5 +135,19 @@ public class NotesListFragment extends Fragment {
         noteListViewModel.getData().observe(getViewLifecycleOwner(), notes -> {
             adapter.setDataList(notes);
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main_actions_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_sync) {
+            noteListViewModel.pullData();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

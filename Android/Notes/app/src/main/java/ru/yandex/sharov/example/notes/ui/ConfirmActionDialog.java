@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes;
+package ru.yandex.sharov.example.notes.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;

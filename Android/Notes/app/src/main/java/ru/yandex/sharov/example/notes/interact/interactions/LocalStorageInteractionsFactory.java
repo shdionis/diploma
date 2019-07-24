@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.interact.interactions;
 
 import android.os.AsyncTask;
 
@@ -6,18 +6,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
-public class DatabaseInteractionsFactory {
+import java.util.Collection;
+
+import ru.yandex.sharov.example.notes.entities.Note;
+import ru.yandex.sharov.example.notes.repository.local.LocalStorageRepository;
+
+public class LocalStorageInteractionsFactory {
 
     @NonNull
-    private final NoteDao notesDao;
+    private final LocalStorageRepository localRepo;
 
-    private DatabaseInteractionsFactory(@NonNull NoteDao notesDB) {
-        this.notesDao = notesDB;
+    private LocalStorageInteractionsFactory(@NonNull LocalStorageRepository notesDB) {
+        this.localRepo = notesDB;
     }
 
     @NonNull
-    public static DatabaseInteractionsFactory newInstance(@NonNull NoteDao notesDao) {
-        return new DatabaseInteractionsFactory(notesDao);
+    public static LocalStorageInteractionsFactory newInstance(@NonNull LocalStorageRepository localRepo) {
+        return new LocalStorageInteractionsFactory(localRepo);
     }
 
     @NonNull
@@ -35,10 +40,15 @@ public class DatabaseInteractionsFactory {
         return new DeleteNoteAsyncTask();
     }
 
+    @NonNull
+    public AsyncTask<Void, Void, Void> createMergeNotesTask(Collection<Note> notes) {
+        return new MergeNotesTask(notes);
+    }
+
     private class DeleteNoteAsyncTask extends AsyncTask<Long, Void, Void> {
         @Override
         protected Void doInBackground(Long... ids) {
-            notesDao.deleteNotes(ids);
+            localRepo.deleteNotesByIds(ids);
             return null;
         }
     }
@@ -58,7 +68,7 @@ public class DatabaseInteractionsFactory {
         @Nullable
         @Override
         protected Note doInBackground(Void... voids) {
-            return notesDao.getNotesById(id);
+            return localRepo.getNotesById(id);
         }
 
         @Override
@@ -75,7 +85,22 @@ public class DatabaseInteractionsFactory {
 
         @Override
         protected Void doInBackground(Note... notes) {
-            notesDao.insertOrUpdateNotes(notes);
+            localRepo.insertOrUpdateNotes(notes);
+            return null;
+        }
+    }
+
+    private class MergeNotesTask extends AsyncTask<Void, Void, Void> {
+        @NonNull
+        private final Collection<Note> notes;
+
+        public MergeNotesTask(@NonNull Collection<Note> notes) {
+            this.notes = notes;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            localRepo.mergeNotesList(notes);
             return null;
         }
     }

@@ -1,4 +1,4 @@
-package ru.yandex.sharov.example.notes.data;
+package ru.yandex.sharov.example.notes.entities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,19 +28,28 @@ public class Note {
     private Boolean deleted;
 
     public Note() {
-        date = System.currentTimeMillis();
-        guid = UUID.randomUUID().toString();
-        title = "";
-        deleted = false;
+        this.date = System.currentTimeMillis();
+        this.title = "";
+        this.guid = UUID.randomUUID().toString();
+        this.deleted = Boolean.FALSE;
     }
 
     @Ignore
-    public Note(@NonNull Long id, @NonNull String title, @NonNull Long date, @Nullable String text) {
+    public Note(@NonNull Long id, @NonNull String title, @NonNull Long date, @Nullable String content) {
         this();
         this.id = id;
         this.title = title;
         this.date = date;
-        this.content = text;
+        this.content = content;
+    }
+
+    @Ignore
+    public Note(@NonNull String guid, @NonNull String title, @Nullable String content, @NonNull Long date, @NonNull Boolean deleted) {
+        this.guid = guid;
+        this.title = title;
+        this.content = content;
+        this.date = date;
+        this.deleted = deleted;
     }
 
     @NonNull
